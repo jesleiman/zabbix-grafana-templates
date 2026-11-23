@@ -1,0 +1,313 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a47e4b4a08b2481a80f0db79d008d981
+      name: Templates/Ubiquiti
+  templates:
+    - uuid: 0fee265eef6544ac8f55bef8e2c4f355
+      template: 'Ubiquiti Rocket AC Lite V2'
+      name: 'Ubiquiti Rocket AC Lite V2'
+      vendor:
+        name: jesleiman
+        version: 1.0-1
+      templates:
+        - name: 'Generic by SNMP'
+      groups:
+        - name: Templates/Ubiquiti
+      items:
+        - uuid: 354fa7bacce547c9a3a84cdebbf942d3
+          name: 'Lan Eth0 enabled'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifAdminStatus.4'
+          key: ifAdminStatus.4
+          delay: 15m
+          history: 90d
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 630a4604b8804d3cad68d437332b5aa9
+          name: 'Lan Eth1 enabled'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifAdminStatus.5'
+          key: ifAdminStatus.5
+          delay: 15m
+          history: 90d
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 2eb7d32b33e3420b9ce4fec0e09d6e59
+          name: 'Wireless ath0 enabled'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.2.2.1.7.9
+          key: ifAdminStatus.9
+          delay: 15m
+          history: 90d
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: 031e16d68935412dbcea7c651294d84f
+          name: 'Traffic In ath0 (wireless)'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifInOctets.9'
+          key: ifInOctets.9
+          history: 90d
+          units: bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            - type: MULTIPLIER
+              parameters:
+                - '8'
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: b730af56c2e646beb5eaa05c5a08b508
+          name: 'Lan Eth0 link up'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifOperStatus.4'
+          key: ifOperStatus.4
+          history: 90d
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 89033698e5ab43cabf0402ba57281080
+          name: 'Lan Eth1 link up'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifOperStatus.5'
+          key: ifOperStatus.5
+          history: 90d
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 7662bc0b2764425f8c79028f5686ad4c
+          name: 'Wireless ath0 link up'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.2.2.1.8.9
+          key: ifOperStatus.9
+          history: 90d
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: b19d2d387a2042b7b7f15233c1454e8a
+          name: 'Traffic Out ath0 (wireless)'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifOutOctets.9'
+          key: ifOutOctets.9
+          history: 90d
+          units: bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            - type: MULTIPLIER
+              parameters:
+                - '8'
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 4587b813eb714fa787baee3d5bb1839d
+          name: Latitude
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.3.0
+          key: ubnt.latitude
+          delay: 1d
+          history: 7d
+          value_type: TEXT
+          trends: '0'
+          inventory_link: LOCATION_LAT
+          tags:
+            - tag: Application
+              value: GEO
+        - uuid: 47f58233cf2a4f5da4111136dde8b09f
+          name: Longitude
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.4.0
+          key: ubnt.longitude
+          delay: 1d
+          history: 7d
+          value_type: TEXT
+          trends: '0'
+          inventory_link: LOCATION_LON
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - '^(-[0-9]+)\.-([0-9]+)$'
+                - \1.\2
+          tags:
+            - tag: Application
+              value: GEO
+        - uuid: f6a04ab19c814bb7b649fdf30e4b8f93
+          name: 'Hardware model'
+          type: SNMP_AGENT
+          snmp_oid: 1.2.840.10036.3.1.2.1.3.9
+          key: ubntDeviceModel
+          delay: 1d
+          value_type: TEXT
+          trends: '0'
+          description: 'Device Model'
+          inventory_link: MODEL
+          tags:
+            - tag: component
+              value: system
+        - uuid: bc1b2a9fb58f44d7ac4b9885a87dae7e
+          name: 'Firmware Version'
+          type: SNMP_AGENT
+          snmp_oid: .1.2.840.10036.3.1.2.1.4.9
+          key: ubntFirmware
+          delay: 1d
+          history: 90d
+          value_type: TEXT
+          trends: '0'
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - '\.v([0-9]+\.[0-9]+\.[0-9]+)'
+                - v\1
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          tags:
+            - tag: component
+              value: system
+        - uuid: 83c55f93738341b3893517bf35ad937d
+          name: 'DFS Enabled'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.4.1.1.5.1
+          key: ubntRadioDfsEnabled.1
+          delay: 5m
+          history: 90d
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: 0218533cccb1480087be2c1e776527ee
+          name: 'Radio Frequency'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.4.1.1.4.1
+          key: ubntRadioFreq.1
+          delay: 5m
+          history: 90d
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: b393ee0b898c41ada8d8784c144d49fe
+          name: 'TX Power'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.4.1.1.6.1
+          key: ubntRadioTxPower.1
+          delay: 5m
+          history: 90d
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: 0a8a8ff9798e4cd0bf46ad40dc3ca2c5
+          name: 'Wireless CCQ'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.4.5.1.7.1
+          key: ubntWlStatCcq.1
+          delay: 5m
+          history: 90d
+          units: '%'
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: f9a1c332222b4ae69f7b3b9a0f1b0779
+          name: 'Channel Width'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.4.5.1.14.1
+          key: ubntWlStatChanWidth.1
+          delay: 5m
+          history: 90d
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: ba75ed170655471c81a35b888712624c
+          name: 'Noise Floor'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.4.5.1.8.1
+          key: ubntWlStatNoiseFloor.1
+          delay: 5m
+          history: 90d
+          value_type: FLOAT
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: 180262e11f0c4011b5b2392f105cab1b
+          name: 'Wireless RX Rate'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.4.5.1.10.1
+          key: ubntWlStatRxRate.1
+          history: 90d
+          units: bps
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: fa646cfb29184d748eaee68e72180d51
+          name: 'Wireless TX Rate'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.4.5.1.9.1
+          key: ubntWlStatTxRate.1
+          history: 90d
+          units: bps
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+      tags:
+        - tag: class
+          value: network
+        - tag: target
+          value: airos
+        - tag: target
+          value: Rocket
+  graphs:
+    - uuid: a0ff619a7cf84711b73b95e1c5245d9c
+      name: Frequency
+      width: '500'
+      graph_items:
+        - color: 00C800
+          item:
+            host: 'Ubiquiti Rocket AC Lite'
+            key: ubntRadioFreq.1
+    - uuid: de2a8b78af2848b5afc2bce7d48aaf85
+      name: 'ICMP Responce Time'
+      graph_items:
+        - color: 00C800
+          item:
+            host: 'Ubiquiti Rocket AC Lite'
+            key: icmppingsec
+    - uuid: 2e1bdb20639a4f33ba36776e07e7393e
+      name: Signal
+      width: '500'
+      graph_items:
+        - color: 00C800
+          item:
+            host: 'Ubiquiti Rocket AC Lite'
+            key: ubntRadioTxPower.1
+    - uuid: 8e7977bd95444c788081cecc32e2d946
+      name: 'Wireless Speed Capacity'
+      graph_items:
+        - drawtype: BOLD_LINE
+          color: 00EE00
+          item:
+            host: 'Ubiquiti Rocket AC Lite'
+            key: ubntWlStatTxRate.1
+        - sortorder: '1'
+          drawtype: BOLD_LINE
+          color: 0000EE
+          item:
+            host: 'Ubiquiti Rocket AC Lite'
+            key: ubntWlStatRxRate.1
+    - uuid: adf20ade565b4b87a2ca45eadee22d6b
+      name: 'Wlan Traffic'
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 0000EE
+          item:
+            host: 'Ubiquiti Rocket AC Lite'
+            key: ifInOctets.9
+        - sortorder: '1'
+          drawtype: GRADIENT_LINE
+          color: 00C800
+          item:
+            host: 'Ubiquiti Rocket AC Lite'
+            key: ifOutOctets.9

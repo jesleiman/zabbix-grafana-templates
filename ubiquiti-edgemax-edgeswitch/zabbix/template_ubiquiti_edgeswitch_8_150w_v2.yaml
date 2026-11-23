@@ -1,0 +1,263 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a47e4b4a08b2481a80f0db79d008d981
+      name: Templates/Ubiquiti
+  templates:
+    - uuid: 8528a04d04a743d6acaf9fad8f2ceb3d
+      template: 'Ubiquiti EdgeSwitch 8 150W V2'
+      name: 'Ubiquiti EdgeSwitch 8 150W V2'
+      vendor:
+        name: jesleiman
+        version: 1.0-1      
+      templates:
+        - name: 'Generic by SNMP'
+      groups:
+        - name: Templates/Ubiquiti
+      items:
+        - uuid: 8a9d504e749f42648680ff3ada1da5d6
+          name: 'Load average last 1 minute'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.4413.1.1.1.1.4.8.1.3.7
+          key: Load1Minute
+          history: 1d
+          value_type: FLOAT
+          units: '%'
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - '60 Sec \(\s*([0-9\.]+)\%\)'
+                - \1
+          tags:
+            - tag: component
+              value: load
+            - tag: component
+              value: system
+          triggers:
+            - uuid: 95f37d4eabf8445b971e7bc15dc0eb35
+              expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/Load1Minute)>{$LOAD_AVG_PER_CPU.MAX.WARN}'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/Load1Minute)<{$LOAD_AVG_PER_CPU.MAX.WARN}'
+              name: 'Load average is too high (per CPU load over {$LOAD_AVG_PER_CPU.MAX.WARN} for 1m)'
+              opdata: 'Load averages(1m): {ITEM.LASTVALUE1}'
+              priority: AVERAGE
+              description: 'Per CPU load average is too high. Your system may be slow to respond.'
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: 26b00e9a11274e74aa342c3249372f15
+          name: 'Total amount of available memory'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.4413.1.1.1.1.4.1.0
+          key: MemAvailable
+          history: 7d
+          trends: '0'
+          units: b
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: system
+        - uuid: 2235dd6a2bed4c299070af144d17af5b
+          name: 'Total amount of memory'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.4413.1.1.1.1.4.2.0
+          key: MemTotal
+          history: 7d
+          trends: '0'
+          units: b
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: system
+        - uuid: fd97f7cafef141e1a6abb55c862e5d50
+          name: 'Used memory'
+          type: CALCULATED
+          key: MemUsed
+          history: 7d
+          trends: '0'
+          units: b
+          params: last(//MemTotal)-last(//MemAvailable)
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: system
+        - uuid: 02aa778e7c1d49699498d00c8e36f549
+          name: 'Firmware Version'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.1.1.0
+          key: system.hw.firmware
+          delay: 1d
+          value_type: TEXT
+          trends: '0'
+          inventory_link: SOFTWARE
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - 'EdgeSwitch [^,]+,\s*([^,]+)'
+                - v\1
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          tags:
+            - tag: component
+              value: system
+      discovery_rules:
+        - uuid: 1a7ba003f95a465a813dc742a66baa26
+          name: 'Network interfaces discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#IFOPERSTATUS},1.3.6.1.2.1.2.2.1.8,{#IFNAME},1.3.6.1.2.1.2.2.1.2]'
+          key: NetworkInterface
+          delay: 1d
+          lifetime: 30d
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: 03d321d9a0b144949a5c71e560e55082
+              name: 'Interface {#IFNAME} : Bits received'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.2.2.1.10.{#SNMPINDEX}'
+              key: 'net.if.in[ifHCInOctets.{#SNMPINDEX}]'
+              history: 7d
+              trends: '0'
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: Application
+                  value: 'Interface Speed'
+                - tag: component
+                  value: network
+            - uuid: 6172f8a9cf1b4bcdb2912c5acff5ba97
+              name: 'Interface {#IFNAME} : Bits sent'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.2.2.1.16.{#SNMPINDEX}'
+              key: 'net.if.out[ifHCOutOctets.{#SNMPINDEX}]'
+              history: 7d
+              trends: '0'
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: Application
+                  value: 'Interface Speed'
+                - tag: component
+                  value: network
+            - uuid: d7b1aab394e94255a66e6a8fa001106d
+              name: 'Interface {#IFNAME} : Speed'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.2.2.1.5.{#SNMPINDEX}'
+              key: 'net.if.speed[ifHighSpeed.{#SNMPINDEX}]'
+              delay: 1h
+              history: 1d
+              trends: '0'
+              units: bps
+              preprocessing:
+                - type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1h
+              tags:
+                - tag: Application
+                  value: 'Interface Speed'
+                - tag: component
+                  value: network
+            - uuid: 0f55b5962c0d4e07a3a0978f326402af
+              name: 'Interface {#IFNAME} : Status'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.2.2.1.8.{#SNMPINDEX}'
+              key: 'net.if.status[ifOperStatus.{#SNMPINDEX}]'
+              history: 7d
+              trends: '0'
+              valuemap:
+                name: ifOperStatus
+              tags:
+                - tag: Application
+                  value: 'interface status'
+                - tag: component
+                  value: network
+              trigger_prototypes:
+                - uuid: 4a1cb3211bb8438daeea7f290460c16b
+                  expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}])<>1'
+                  name: 'EdgeMAX: Interface {#IFNAME} is not up (1).'
+                  event_name: 'EdgeMAX: Interface {#IFNAME} on {HOST.HOST} status is not up (1).'
+                  opdata: 'Interface is currently {ITEM.VALUE1}'
+                  status: DISABLED
+                  priority: AVERAGE
+                  description: 'Interface status is not up (1). Get the interface up again to close the problem automatically.'
+                - uuid: d46a0aba061f42618440cd292093c49e
+                  expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)<>last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}],#2) and last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}],#2)=1'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)=1'
+                  name: 'EdgeMAX: Interface {#IFNAME} status has changed'
+                  event_name: 'EdgeMAX: Interface {#IFNAME} on {HOST.HOST} status has changed from up (1).'
+                  opdata: 'Interface is currently {ITEM.VALUE1}'
+                  priority: AVERAGE
+                  description: 'Interface status has changed from up (1). Acknowledge to close the problem manually or get the interface up again to close the problem automatically'
+                  manual_close: 'YES'
+          graph_prototypes:
+            - uuid: 9bac23c1e9a346c5ac250913a93fbe1c
+              name: 'Interface {#IFNAME}: Network traffic'
+              ymin_type_1: FIXED
+              graph_items:
+                - color: F63100
+                  calc_fnc: ALL
+                  item:
+                    host: 'Ubiquiti EdgeSwitch 8 150W SNMP'
+                    key: 'net.if.in[ifHCInOctets.{#SNMPINDEX}]'
+                - sortorder: '1'
+                  color: 199C0D
+                  calc_fnc: ALL
+                  item:
+                    host: 'Ubiquiti EdgeSwitch 8 150W SNMP'
+                    key: 'net.if.out[ifHCOutOctets.{#SNMPINDEX}]'
+      tags:
+        - tag: class
+          value: network
+        - tag: target
+          value: 'EdgeSwitch 8 150W'
+        - tag: target
+          value: ubiquiti
+      macros:
+        - macro: '{$LOAD_AVG_PER_CPU.MAX.WARN}'
+          value: '85'
+          description: 'This macro is used as a threshold in memory utilization trigger.'
+        - macro: '{$MEMORY.UTIL.MAX}'
+          value: '90'
+          description: 'This macro is used as a threshold in memory utilization trigger.'
+      valuemaps:
+        - uuid: 5537e0a9d6a046bcabe27e0e2a88b81c
+          name: ifOperStatus
+          mappings:
+            - value: '1'
+              newvalue: up
+            - value: '2'
+              newvalue: down
+            - value: '3'
+              newvalue: testing
+            - value: '4'
+              newvalue: unknown
+            - value: '5'
+              newvalue: dormant
+            - value: '6'
+              newvalue: notPresent
+            - value: '7'
+              newvalue: lowerLayerDow

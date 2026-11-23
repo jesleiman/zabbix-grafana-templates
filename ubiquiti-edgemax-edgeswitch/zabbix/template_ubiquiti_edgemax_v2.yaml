@@ -1,0 +1,582 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a47e4b4a08b2481a80f0db79d008d981
+      name: Templates/Ubiquiti
+  templates:
+    - uuid: 51e0e9a9f0ca49569840767018bb586a
+      template: 'Ubiquiti EdgeMAX V2'
+      name: 'Ubiquiti EdgeMAX V2'
+      description: |
+        Supported models
+        
+        This should work with all EdgeRouters.
+        
+        EdgeRouter
+        
+        ER-X, ER-4, ER-5 ( + poe), ER-6 ( + poe), ER-12P, ER-Pro
+      vendor:
+        name: jesleiman
+        version: 1.0-1        
+      templates:
+        - name: 'Generic by SNMP'
+      groups:
+        - name: Templates/Ubiquiti
+      items:
+        - uuid: 268fe8c15d99415dafd32fec95ebb9f0
+          name: 'Load average last 5 minute'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.2021.10.1.3.2
+          key: Load5Minute
+          delay: 5m
+          history: 1d
+          value_type: FLOAT
+          description: '5 minute Load'
+          tags:
+            - tag: component
+              value: load
+            - tag: component
+              value: system
+        - uuid: 55d17189b0894e5bb5aed103ca860527
+          name: 'Total amount of available memory'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.2021.4.6.0
+          key: MemAvailable
+          delay: 5m
+          history: 7d
+          trends: '0'
+          units: b
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: system
+        - uuid: 8a61a3d93e194ee7a44420db20b37de6
+          name: 'Memory (buffers)'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.2021.4.14.0
+          key: MemBuffers
+          delay: 5m
+          history: 7d
+          trends: '0'
+          units: b
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: system
+        - uuid: c858f465d2bb4651a23bcfa86596c371
+          name: 'Memory (cached)'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.2021.4.15.0
+          key: MemCached
+          delay: 5m
+          history: 7d
+          trends: '0'
+          units: b
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: system
+        - uuid: ba758bc30b3a47f69f834e6815589a2d
+          name: 'Total memory'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.2021.4.5.0
+          key: MemTotal
+          delay: 1d
+          history: 7d
+          trends: '0'
+          units: b
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: system
+        - uuid: 74e161402bc1440e8d30a413c7a0968e
+          name: 'Memory utilization'
+          type: CALCULATED
+          key: MemUtil
+          delay: 5m
+          history: 7d
+          value_type: FLOAT
+          trends: '0'
+          units: '%'
+          params: '(last(//MemUsed)-last(//MemBuffers)-last(//MemCached))/last(//MemTotal)*100'
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - 'return Math.floor(value)'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: system
+          triggers:
+            - uuid: a30deff68b824ca2b8cd81ae889cdf2f
+              expression: 'min(/Ubiquiti EdgeMAX/MemUtil,5m)>{$MEMORY.UTIL.MAX}'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'max(/Ubiquiti EdgeMAX/MemUtil,5m)<{$MEMORY.UTIL.MAX}'
+              name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
+              opdata: 'Memory utilization: {ITEM.LASTVALUE1}'
+              priority: WARNING
+              description: 'The system is running out of free memory.'
+              tags:
+                - tag: scope
+                  value: performance
+        - uuid: 84ca994c46c745c188b66049cd7876b2
+          name: 'CPU utilization (5 min)'
+          type: CALCULATED
+          key: system.cpu.util
+          delay: 5m
+          history: 7d
+          value_type: FLOAT
+          params: 'avg(last_foreach(//sys.cpu_load[*],5m))'
+          tags:
+            - tag: component
+              value: cpu
+        - uuid: 0452cf98dc254c81b8a71784599a7515
+          name: 'CPU Discovery Master SNMP Item'
+          type: SNMP_AGENT
+          snmp_oid: 'walk[1.3.6.1.2.1.25.3.2.1.1,1.3.6.1.2.1.25.3.2.1.2]'
+          key: system.hr.devices.walk
+          delay: 1d
+          history: '0'
+          value_type: TEXT
+          trends: '0'
+          description: 'Base item for enumerated hardware resources.'
+        - uuid: f3398c0a648a42c0953a708a8a2138e6
+          name: 'Firmware Version'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.1.1.0
+          key: system.hw.firmware
+          delay: 1d
+          value_type: TEXT
+          trends: '0'
+          inventory_link: SOFTWARE
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - 'EdgeOS v([0-9]+\.[0-9]+\.[0-9]+)'
+                - v\1
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          tags:
+            - tag: component
+              value: system
+      discovery_rules:
+        - uuid: be1135f460a74849ababed15f93ccceb
+          name: 'CPU discovery (dependent)'
+          type: DEPENDENT
+          key: cpu.discovery
+          delay: '0'
+          item_prototypes:
+            - uuid: 3b9727a57dee4742b7684130e845e676
+              name: 'CPU{#CPU_COUNTER} load'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.25.3.3.1.2.{#DEV_ID}'
+              key: 'sys.cpu_load[{#CPU_COUNTER}]'
+              delay: 5m
+              history: 7d
+              units: '%'
+          master_item:
+            key: system.hr.devices.walk
+          preprocessing:
+            - type: SNMP_WALK_TO_JSON
+              parameters:
+                - '{#DEV_ID}'
+                - 1.3.6.1.2.1.25.3.2.1.1
+                - '0'
+                - '{#DEV_TYPE}'
+                - 1.3.6.1.2.1.25.3.2.1.2
+                - '0'
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  try {
+                      var data = JSON.parse(value);
+                  }
+                  catch (error) {
+                      throw 'Failed to parse JSON of HOST-RESOURCES-MIB::hrProcessorLoad discovery';
+                  }
+                  
+                  var fields = ['{#SNMPINDEX}', '{#DEV_ID}', '{#DEV_TYPE}'];
+                  var filteredData = data.filter(function (element) {
+                      return element['{#DEV_TYPE}'] === '.1.3.6.1.2.1.25.3.1.3';
+                  });
+                  
+                  var counter = 0;
+                  
+                  filteredData.forEach(function (element) {
+                      fields.forEach(function (field) {
+                          element[field] = element[field] || '';
+                      });
+                      element['{#CPU_COUNTER}'] = counter++; 
+                  });
+                  
+                  return JSON.stringify(filteredData);
+        - uuid: 36f64bd4b35d41d9a8fde299df72ca9a
+          name: 'Network interfaces discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#IFOPERSTATUS},1.3.6.1.2.1.2.2.1.8,{#IFNAME},1.3.6.1.2.1.31.1.1.1.1]'
+          key: NetworkInterface
+          delay: 1d
+          lifetime: 30d
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: a922c4529f82490287f0cbb29997f331
+              name: 'Interface {#IFNAME} : Bits received'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.31.1.1.1.6.{#SNMPINDEX}'
+              key: 'net.if.in[ifHCInOctets.{#SNMPINDEX}]'
+              history: 7d
+              trends: '0'
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: Application
+                  value: 'Interface Speed'
+                - tag: component
+                  value: network
+            - uuid: c01af9e30682460fa97177bc067f7327
+              name: 'Interface {#IFNAME} : Address'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.4.20.1.1[index, 1.3.6.1.2.1.4.20.1.2, {#SNMPINDEX}]'
+              key: 'net.if.ip[ipAddrEntry.{#SNMPINDEX}]'
+              delay: 24h
+              value_type: TEXT
+              trends: '0'
+              preprocessing:
+                - type: CHECK_NOT_SUPPORTED
+                  parameters:
+                    - '-1'
+              tags:
+                - tag: Application
+                  value: 'interface ip address'
+                - tag: component
+                  value: network
+              trigger_prototypes:
+                - uuid: b3ee11aac54940819c9615d7ced39e33
+                  expression: 'last(/Ubiquiti EdgeMAX/net.if.ip[ipAddrEntry.{#SNMPINDEX}],#1)<>last(/Ubiquiti EdgeMAX/net.if.ip[ipAddrEntry.{#SNMPINDEX}],#2) and length(last(/Ubiquiti EdgeMAX/net.if.ip[ipAddrEntry.{#SNMPINDEX}]))>0'
+                  recovery_mode: NONE
+                  name: 'EdgeMAX: Interface {#IFNAME} address has changed'
+                  event_name: 'EdgeMAX: Interface {#IFNAME} address on {HOST.HOST} has changed from {FUNCTION.VALUE2} to {FUNCTION.VALUE3}.'
+                  opdata: 'Interface {#IFNAME} address is  {ITEM.LASTVALUE1}'
+                  priority: INFO
+                  description: 'The interface address has changed. Acknowledge to close the problem manually.'
+                  type: MULTIPLE
+                  manual_close: 'YES'
+            - uuid: b067d0d9f6cf4212a35849f2d6d6309f
+              name: 'Interface {#IFNAME} : Bits sent'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.31.1.1.1.10.{#SNMPINDEX}'
+              key: 'net.if.out[ifHCOutOctets.{#SNMPINDEX}]'
+              history: 7d
+              trends: '0'
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: Application
+                  value: 'Interface Speed'
+                - tag: component
+                  value: network
+            - uuid: bf8592a3ac8246f7b883b387438c80c2
+              name: 'Interface {#IFNAME} : Speed'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.2.2.1.5.{#SNMPINDEX}'
+              key: 'net.if.speed[ifHighSpeed.{#SNMPINDEX}]'
+              delay: 1h
+              history: 1d
+              trends: '0'
+              units: bps
+              preprocessing:
+                - type: DISCARD_UNCHANGED_HEARTBEAT
+                  parameters:
+                    - 1h
+              tags:
+                - tag: Application
+                  value: 'Interface Speed'
+                - tag: component
+                  value: network
+            - uuid: 650af0d82a9f495db7b174940d56a873
+              name: 'Interface {#IFNAME} : Status'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.2.2.1.8.{#SNMPINDEX}'
+              key: 'net.if.status[ifOperStatus.{#SNMPINDEX}]'
+              history: 7d
+              trends: '0'
+              valuemap:
+                name: ifOperStatus
+              tags:
+                - tag: Application
+                  value: 'interface status'
+                - tag: component
+                  value: network
+              trigger_prototypes:
+                - uuid: f28b60068151468daf04255aca727604
+                  expression: 'last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}])<>1'
+                  name: 'EdgeMAX: Interface {#IFNAME} is not up (1).'
+                  event_name: 'EdgeMAX: Interface {#IFNAME} on {HOST.HOST} status is not up (1).'
+                  opdata: 'Interface is currently {ITEM.VALUE1}'
+                  status: DISABLED
+                  priority: AVERAGE
+                  description: 'Interface status is not up (1). Get the interface up again to close the problem automatically.'
+                - uuid: ed8cfda8eff44c01a8c18956bb18aef5
+                  expression: 'last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)<>last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}],#2) and last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}],#2)=1'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)=1'
+                  name: 'EdgeMAX: Interface {#IFNAME} status has changed'
+                  event_name: 'EdgeMAX: Interface {#IFNAME} on {HOST.HOST} status has changed from up (1).'
+                  opdata: 'Interface is currently {ITEM.VALUE1}'
+                  priority: AVERAGE
+                  description: 'Interface status has changed from up (1). Acknowledge to close the problem manually or get the interface up again to close the problem automatically'
+                  manual_close: 'YES'
+          graph_prototypes:
+            - uuid: 50b02b31a5c849ed8a469cbc1f74bb1f
+              name: 'Interface {#IFNAME}: Network traffic'
+              ymin_type_1: FIXED
+              graph_items:
+                - color: F63100
+                  calc_fnc: ALL
+                  item:
+                    host: 'Ubiquiti EdgeMAX'
+                    key: 'net.if.in[ifHCInOctets.{#SNMPINDEX}]'
+                - sortorder: '1'
+                  color: 199C0D
+                  calc_fnc: ALL
+                  item:
+                    host: 'Ubiquiti EdgeMAX'
+                    key: 'net.if.out[ifHCOutOctets.{#SNMPINDEX}]'
+      macros:
+        - macro: '{$LOAD_AVG_PER_CPU.MAX.WARN}'
+          value: '1.5'
+          description: 'This macro is used as a threshold in memory utilization trigger.'
+        - macro: '{$MEMORY.UTIL.MAX}'
+          value: '90'
+          description: 'This macro is used as a threshold in memory utilization trigger.'
+      dashboards:
+        - uuid: f58a92b380334662982059edbee55cd7
+          name: 'EdgeMAX: Network Interfaces'
+          pages:
+            - widgets:
+                - type: graphprototype
+                  name: 'EdgeMAX: Network Interfaces'
+                  width: '72'
+                  height: '12'
+                  fields:
+                    - type: INTEGER
+                      name: columns
+                      value: '3'
+                    - type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        host: 'Ubiquiti EdgeMAX'
+                        name: 'Interface {#IFNAME}: Network traffic'
+                    - type: STRING
+                      name: reference
+                      value: AAAAA
+                    - type: INTEGER
+                      name: rows
+                      value: '3'
+        - uuid: 04ea8df74b3c4bfaaebb86184b65dc23
+          name: 'EdgeMAX: System Statistics'
+          pages:
+            - widgets:
+                - type: item
+                  width: '24'
+                  hide_header: 'YES'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Ubiquiti EdgeMAX'
+                        key: system.name
+                    - type: INTEGER
+                      name: show.0
+                      value: '2'
+                    - type: INTEGER
+                      name: units_bold
+                      value: '0'
+                    - type: INTEGER
+                      name: units_show
+                      value: '0'
+                - type: graph
+                  'y': '2'
+                  width: '72'
+                  height: '5'
+                  fields:
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: 'Ubiquiti EdgeMAX'
+                        name: 'EdgeMAX: CPU Load'
+                    - type: STRING
+                      name: reference
+                      value: DFDWE
+                - type: graph
+                  'y': '7'
+                  width: '36'
+                  height: '5'
+                  fields:
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: 'Ubiquiti EdgeMAX'
+                        name: 'EdgeMAX:  Memory usage'
+                    - type: STRING
+                      name: reference
+                      value: AAAAA
+                - type: graph
+                  'y': '12'
+                  width: '72'
+                  height: '5'
+                  fields:
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: 'Ubiquiti EdgeMAX'
+                        name: 'EdgeMAX: System Load'
+                    - type: STRING
+                      name: reference
+                      value: FFKHC
+                - type: item
+                  name: 'Uptime (network)'
+                  x: '24'
+                  width: '12'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Ubiquiti EdgeMAX'
+                        key: 'system.net.uptime[sysUpTime.0]'
+                    - type: INTEGER
+                      name: show.0
+                      value: '2'
+                - type: item
+                  name: 'Uptime (hardware)'
+                  x: '36'
+                  width: '12'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Ubiquiti EdgeMAX'
+                        key: 'system.hw.uptime[hrSystemUptime.0]'
+                    - type: INTEGER
+                      name: show.0
+                      value: '2'
+                - type: graph
+                  x: '36'
+                  'y': '7'
+                  width: '36'
+                  height: '5'
+                  fields:
+                    - type: GRAPH
+                      name: graphid.0
+                      value:
+                        host: 'Ubiquiti EdgeMAX'
+                        name: 'EdgeMAX: Memory Used'
+                    - type: STRING
+                      name: reference
+                      value: AAAAD
+      valuemaps:
+        - uuid: 5040d26951114decbb582ae0589c463a
+          name: ifOperStatus
+          mappings:
+            - value: '1'
+              newvalue: up
+            - value: '2'
+              newvalue: down
+            - value: '3'
+              newvalue: testing
+            - value: '4'
+              newvalue: unknown
+            - value: '5'
+              newvalue: dormant
+            - value: '6'
+              newvalue: notPresent
+            - value: '7'
+              newvalue: lowerLayerDow
+  graphs:
+    - uuid: 7445893be4c448ceae6c01ccc251aef0
+      name: 'EdgeMAX: CPU Load'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 199C0D
+          calc_fnc: ALL
+          item:
+            host: 'Ubiquiti EdgeMAX'
+            key: system.cpu.util
+    - uuid: 66415b709399470bb181f7c604f7b00a
+      name: 'EdgeMAX:  Memory usage'
+      height: '500'
+      show_work_period: 'NO'
+      show_triggers: 'NO'
+      type: STACKED
+      graph_items:
+        - color: F63100
+          calc_fnc: MIN
+          item:
+            host: 'Ubiquiti EdgeMAX'
+            key: MemBuffers
+        - sortorder: '1'
+          color: 2774A4
+          calc_fnc: MIN
+          item:
+            host: 'Ubiquiti EdgeMAX'
+            key: MemCached
+        - sortorder: '2'
+          color: 199C0D
+          calc_fnc: MIN
+          item:
+            host: 'Ubiquiti EdgeMAX'
+            key: MemAvailable
+    - uuid: f260a63bc3b04c3b80b47f83bb05ed9c
+      name: 'EdgeMAX: Memory Used'
+      percent_right: '50'
+      ymin_type_1: FIXED
+      graph_items:
+        - color: 199C0D
+          calc_fnc: ALL
+          item:
+            host: 'Ubiquiti EdgeMAX'
+            key: MemUtil
+    - uuid: f6837489bd7246fcb6296b62a604b6a1
+      name: 'EdgeMAX: System Load'
+      ymin_type_1: FIXED
+      graph_items:
+        - sortorder: '1'
+          color: F63100
+          calc_fnc: ALL
+          item:
+            host: 'Ubiquiti EdgeMAX'
+            key: Load5Minute

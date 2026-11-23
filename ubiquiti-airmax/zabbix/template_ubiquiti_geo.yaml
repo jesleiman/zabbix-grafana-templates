@@ -1,0 +1,50 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a47e4b4a08b2481a80f0db79d008d981
+      name: Templates/Ubiquiti
+  templates:
+    - uuid: fd499a215cfa4435bc3d0affdc75f6a0
+      template: 'Ubiquiti GEO'
+      name: 'Ubiquiti GEO'
+      description: 'Template para leer latitud y longitud de los UBNT'
+      vendor:
+        name: jesleiman
+        version: 1.0-1      
+      groups:
+        - name: Templates/Ubiquiti
+      items:
+        - uuid: 3d1328b4e3154f35b772ed69ebd8c857
+          name: Latitude
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.3.0
+          key: ubnt.latitude
+          delay: 1d
+          history: 7d
+          value_type: TEXT
+          trends: '0'
+          inventory_link: LOCATION_LAT
+          tags:
+            - tag: Application
+              value: GEO
+        - uuid: f84ccbb8b8d442768264430f01e7388d
+          name: Longitude
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.4.0
+          key: ubnt.longitude
+          delay: 1d
+          history: 7d
+          value_type: TEXT
+          trends: '0'
+          inventory_link: LOCATION_LON
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - '^(-[0-9]+)\.-([0-9]+)$'
+                - \1.\2
+          tags:
+            - tag: Application
+              value: GEO
+      tags:
+        - tag: target
+          value: ubiquiti

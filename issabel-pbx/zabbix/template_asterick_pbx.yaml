@@ -1,0 +1,199 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 79f31eeab03146229b1e019097fad672
+      name: Templates
+  templates:
+    - uuid: e6c7c3c400e34b4fbe4cd514bfa54159
+      template: 'Template Asterisk Service'
+      name: 'Template Asterisk Service'
+      description: 'Plantilla maestra definitiva para Asterisk 18 e Issabel 5 (SIP, PJSIP, SCCP, Uptime, Version, Lastreload, Running Processes)'
+      vendor:
+        name: jesleiman
+        version: 1.0-1      
+      groups:
+        - name: Templates
+      items:
+        - uuid: fd2b26bba9274d86910167664e82a691
+          name: 'Ongoing Calls'
+          key: asterisk.active_calls
+          delay: '30'
+          history: 7d
+          trends: 30d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: d2c703521f884fe9bede672994f26552
+          name: 'Service Asterisk Status'
+          key: asterisk.asterisk_running
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: System
+        - uuid: 92c1e6b203c84ecf92997a1631b3fa14
+          name: 'Extensions Custom Total'
+          key: asterisk.extensions_custom_total
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: 3b07ebbafe8943dcbd5a90ae2a7bfda1
+          name: 'Extensions Offline'
+          key: asterisk.extensions_offline
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: a5a8befb2d97418bac110be57bcf3d71
+          name: 'Extensions Online'
+          key: asterisk.extensions_online
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: e6daa5305e27474680853033466f33ad
+          name: 'Extensions PJSIP Offline'
+          key: asterisk.extensions_pjsip_offline
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: bfb698840eec47218d1c142a785f23f6
+          name: 'Extensions PJSIP Online'
+          key: asterisk.extensions_pjsip_online
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: 499a184ef67740dca7429a84e0c3a513
+          name: 'Extensions PJSIP Total'
+          key: asterisk.extensions_pjsip_total
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: 037c4c3c3ba848cca1e5837a6cb934d4
+          name: 'Extensions Cisco SCCP Online'
+          key: asterisk.extensions_sccp_online
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: 8369962ce4a14e2ab3f8dbefb810db1c
+          name: 'Extensions SIP Offline'
+          key: asterisk.extensions_sip_offline
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: 20f2a0d0b5e241ba8595e46d26fd8b5b
+          name: 'Extensions SIP Online'
+          key: asterisk.extensions_sip_online
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: d871bfe4430a4b6cb69436b502dad777
+          name: 'Extensions SIP Total'
+          key: asterisk.extensions_sip_total
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: fcb7abfebf8d473bbfa2cf9fa2f6e8ce
+          name: 'Extensions Total'
+          key: asterisk.extensions_total
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: 458a6e2e1c06476fa24a049c8cff98f0
+          name: 'Asterisk Last Reload'
+          key: asterisk.lastreload
+          delay: '60'
+          history: 7d
+          trends: 90d
+          units: s
+          tags:
+            - tag: Application
+              value: System
+        - uuid: adc17862123b47c48a7819287fb02119
+          name: 'Trunks Offline'
+          key: asterisk.trunks_offline
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: ba138e8faef3478c8a2f43c910e86488
+          name: 'Trunks Online'
+          key: asterisk.trunks_online
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: 0b98be05b74d44abb9579f00b4fa5953
+          name: 'Trunks Total'
+          key: asterisk.trunks_total
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: Asterisk
+        - uuid: c80647359cb14d0e9059397e9e37d441
+          name: 'Asterisk Uptime'
+          key: asterisk.uptime
+          delay: '60'
+          history: 7d
+          trends: 90d
+          units: s
+          tags:
+            - tag: Application
+              value: System
+        - uuid: e820cd43bc7e46b1b38902e94a73a456
+          name: 'Asterisk Version'
+          key: asterisk.version
+          delay: '3600'
+          history: 7d
+          value_type: TEXT
+          trends: '0'
+          tags:
+            - tag: Application
+              value: System
+        - uuid: 5ed6ee0072d44b0eacea207baad7a37b
+          name: 'Service Zabbix Running'
+          key: asterisk.zabbix_running
+          delay: '60'
+          history: 7d
+          trends: 90d
+          tags:
+            - tag: Application
+              value: System

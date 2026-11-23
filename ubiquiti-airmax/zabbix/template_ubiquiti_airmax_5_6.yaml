@@ -1,0 +1,577 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a47e4b4a08b2481a80f0db79d008d981
+      name: Templates/Ubiquiti
+  templates:
+    - uuid: 066016af26444e568b4e1a4392460870
+      template: 'Ubiquiti Airmax 5.6'
+      name: 'Ubiquiti Airmax 5.6'
+      groups:
+        - name: Templates/Ubiquiti
+      items:
+        - uuid: 778a8cc64c724d4f9824108c5cb7e589
+          name: 'AirMax Capacity'
+          type: SNMP_AGENT
+          snmp_oid: 'UBNT-AirMAX-MIB::ubntAirMaxCapacity.1'
+          key: ubntAirMaxCapacity.1
+          delay: 5m
+          history: 90d
+          value_type: FLOAT
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+          triggers:
+            - uuid: 1b3fa2c61dcf4ed287eebee721393745
+              expression: 'last(/Ubiquiti Airmax 5.6/ubntAirMaxCapacity.1)<80'
+              name: 'AirMax Capacity 80%'
+              status: DISABLED
+              priority: WARNING
+              description: 'Air Capacity has dropped below 80%'
+        - uuid: 17a9bd6c63a2425a8680e80f975fbd2d
+          name: 'AirMax Quality'
+          type: SNMP_AGENT
+          snmp_oid: 'UBNT-AirMAX-MIB::ubntAirMaxQuality.1'
+          key: ubntAirMaxQuality.1
+          delay: 5m
+          history: 90d
+          value_type: FLOAT
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+          triggers:
+            - uuid: 2f0d5062628c4282a6c60013f47dfc31
+              expression: 'last(/Ubiquiti Airmax 5.6/ubntAirMaxQuality.1)<80'
+              name: 'AirMax Quality 80%'
+              status: DISABLED
+              priority: WARNING
+        - uuid: 63c4721a36264f4a8a247fe52757150b
+          name: 'Radio Frequency'
+          type: SNMP_AGENT
+          snmp_oid: 'UBNT-AirMAX-MIB::ubntRadioFreq.1'
+          key: ubntRadioFreq.1
+          delay: 5m
+          history: 90d
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: 00947cca171949cb9968c8047a469772
+          name: 'Wireless CCQ'
+          type: SNMP_AGENT
+          snmp_oid: 'UBNT-AirMAX-MIB::ubntWlStatCcq.1'
+          key: ubntWlStatCcq.1
+          delay: 5m
+          history: 90d
+          value_type: FLOAT
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: e701fb800f874abc9e65ccd4a4847c50
+          name: 'Noise Floor'
+          type: SNMP_AGENT
+          snmp_oid: 'UBNT-AirMAX-MIB::ubntWlStatNoiseFloor.1'
+          key: ubntWlStatNoiseFloor.1
+          delay: 5m
+          history: 90d
+          value_type: FLOAT
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: 057eed5d28204120a6bed247ba794867
+          name: 'Wireless RX Rate'
+          type: SNMP_AGENT
+          snmp_oid: 'UBNT-AirMAX-MIB::ubntWlStatRxRate.1'
+          key: ubntWlStatRxRate.1
+          history: 90d
+          units: bps
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+          triggers:
+            - uuid: e382bbd012ab444fb50d9dcf158b7dc3
+              expression: 'last(/Ubiquiti Airmax 5.6/ubntWlStatRxRate.1)<216'
+              name: 'AirMax Receive is less than 216'
+              status: DISABLED
+              priority: WARNING
+              description: 'AirMax Receive is less than 216Mbits'
+        - uuid: df3c1f762b524b6a8730cd0f8b856ac1
+          name: 'Wireless Signal'
+          type: SNMP_AGENT
+          snmp_oid: 'UBNT-AirMAX-MIB::ubntWlStatSignal.1'
+          key: ubntWlStatSignal.1
+          history: 90d
+          value_type: FLOAT
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: bde5f77607f94e4dbecbc02713a60f5f
+          name: 'Wireless TX Rate'
+          type: SNMP_AGENT
+          snmp_oid: 'UBNT-AirMAX-MIB::ubntWlStatTxRate.1'
+          key: ubntWlStatTxRate.1
+          history: 90d
+          units: bps
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+          triggers:
+            - uuid: 590c4bb87c874140b32ef633be5926e9
+              expression: 'last(/Ubiquiti Airmax 5.6/ubntWlStatTxRate.1)<216'
+              name: 'AirMax Transmit is less than 216'
+              status: DISABLED
+              priority: WARNING
+              description: 'AirMax Transmit is less than 216'
+    - uuid: 5a88c56a82504d5b9703c12c151d04d9
+      template: 'Ubiquiti Power Beam AC'
+      name: 'Ubiquiti Power Beam AC'
+      templates:
+        - name: 'Generic by SNMP'
+        - name: 'Ubiquiti Airmax 8.0'
+        - name: 'Ubiquiti GEO'
+      groups:
+        - name: Templates/Ubiquiti
+      items:
+        - uuid: 0edbceff624949348e86c76f4fe8100e
+          name: 'Lan Eth0 enabled'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifAdminStatus.4'
+          key: ifAdminStatus.4
+          delay: 5m
+          history: 90d
+          valuemap:
+            name: status
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: f574bf145e894466b1b55795b96703aa
+          name: 'Lan Eth1 enabled'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifAdminStatus.5'
+          key: ifAdminStatus.5
+          delay: 5m
+          history: 90d
+          status: DISABLED
+          valuemap:
+            name: status
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: cebbf0acf83d4ea4805a811c692f437b
+          name: 'Wireless ath0 enabled'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.2.2.1.7.10
+          key: ifAdminStatus.10
+          delay: 5m
+          history: 90d
+          valuemap:
+            name: status
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: 919c5da522f04311a7ec6a9e372344e9
+          name: 'Traffic In eth0'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifInOctets.4'
+          key: ifInOctets.4
+          delay: '30'
+          history: 90d
+          status: DISABLED
+          units: bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            - type: MULTIPLIER
+              parameters:
+                - '8'
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 5dd5bc58fe554c2b9cebd915b4311328
+          name: 'Traffic In eth1'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifInOctets.5'
+          key: ifInOctets.5
+          delay: '30'
+          history: 90d
+          status: DISABLED
+          units: bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            - type: MULTIPLIER
+              parameters:
+                - '8'
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 901de65c9f654cdd981a0bcc04ac9efd
+          name: 'Traffic In ath0 (wireless)'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifInOctets.10'
+          key: ifInOctets.10
+          history: 90d
+          units: bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            - type: MULTIPLIER
+              parameters:
+                - '8'
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 73a6752a48aa415799aaca620ea31fb7
+          name: 'Lan Eth0 link up'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifOperStatus.4'
+          key: ifOperStatus.4
+          history: 90d
+          valuemap:
+            name: statusoper
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 1a35db3d040d40d9918f66e09f7a8643
+          name: 'Lan Eth1 link up'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifOperStatus.5'
+          key: ifOperStatus.5
+          delay: '30'
+          history: 90d
+          status: DISABLED
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: fe33bc6b0cad47d6a5855661b5f59c82
+          name: 'Wireless ath0 link up'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.2.2.1.8.10
+          key: ifOperStatus.10
+          history: 90d
+          tags:
+            - tag: Application
+              value: 'Wifi Status'
+        - uuid: 2e8ad66a7e4e45c1b63fea5c4c31f8cd
+          name: 'Traffic Out eth0'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifOutOctets.4'
+          key: ifOutOctets.4
+          delay: '30'
+          history: 90d
+          status: DISABLED
+          units: bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            - type: MULTIPLIER
+              parameters:
+                - '8'
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 0feb461aa54b4b1fb0b5382fc87b1608
+          name: 'Traffic Out eth1'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifOutOctets.5'
+          key: ifOutOctets.5
+          delay: '30'
+          history: 90d
+          status: DISABLED
+          units: bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            - type: MULTIPLIER
+              parameters:
+                - '8'
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 9e4a41619615441792cec4ae17944c80
+          name: 'Traffic Out ath0 (wireless)'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifOutOctets.10'
+          key: ifOutOctets.10
+          history: 90d
+          units: bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            - type: MULTIPLIER
+              parameters:
+                - '8'
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: 044e85a013194e08ac8b41664d8efb2f
+          name: 'CPU Utilization'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.41112.1.4.8.3.0
+          key: ubnt.cpu.usage
+          delay: 5m
+          value_type: FLOAT
+          units: '%'
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.01'
+          tags:
+            - tag: component
+              value: cpu
+        - uuid: 41d511088a2847688a4a198c5e4b52d9
+          name: 'Free memory'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.10002.1.1.1.1.2.0
+          key: ubnt.mem.free
+          delay: 5m
+          units: B
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1024'
+          tags:
+            - tag: component
+              value: memory
+        - uuid: 4c44ad58aff3499487fb25f6589e832e
+          name: 'Total memory'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.10002.1.1.1.1.1.0
+          key: ubnt.mem.total
+          delay: 1d
+          units: B
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1024'
+          tags:
+            - tag: component
+              value: memory
+        - uuid: b04ac805ef624e049bb47f9969e8a794
+          name: 'Memory utilization'
+          type: CALCULATED
+          key: ubnt.mem.used.pcent
+          delay: 5m
+          trends: '0'
+          units: '%'
+          params: '(last(//ubnt.mem.total) - last(//ubnt.mem.free)) / last(//ubnt.mem.total) * 100'
+          tags:
+            - tag: component
+              value: memory
+        - uuid: 237fb9b3274b4c489a3ba42fe7c1964d
+          name: 'Firmware Version'
+          type: SNMP_AGENT
+          snmp_oid: iso.2.840.10036.3.1.2.1.4.7
+          key: ubntFirmware
+          delay: 1d
+          history: 30d
+          value_type: TEXT
+          trends: '0'
+          inventory_link: SOFTWARE
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - 'v([0-9]+\.[0-9]+\.[0-9]+)'
+                - v\1
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          tags:
+            - tag: component
+              value: system
+        - uuid: 3931314bbbf8456c81f435bce5e0cff2
+          name: 'Station Kernel'
+          type: SNMP_AGENT
+          snmp_oid: iso.3.6.1.2.1.1.1.0
+          key: ubntKernel
+          delay: 1d
+          value_type: TEXT
+          trends: '0'
+          description: 'Device Vendor'
+          tags:
+            - tag: component
+              value: system
+        - uuid: f36077ac70ca4d3a948938f7d27e676b
+          name: 'Hardware model'
+          type: SNMP_AGENT
+          snmp_oid: iso.2.840.10036.3.1.2.1.3.7
+          key: ubntModel
+          delay: 1d
+          value_type: TEXT
+          trends: '0'
+          description: 'Device Model'
+          inventory_link: MODEL
+          tags:
+            - tag: component
+              value: system
+        - uuid: 2bf66a4096964f97ad90a90d65771de4
+          name: 'Station Vendor'
+          type: SNMP_AGENT
+          snmp_oid: iso.2.840.10036.3.1.2.1.2.7
+          key: ubntVendor
+          delay: 1d
+          value_type: TEXT
+          trends: '0'
+          description: 'Device Vendor'
+          tags:
+            - tag: component
+              value: system
+      tags:
+        - tag: class
+          value: network
+        - tag: target
+          value: airos
+        - tag: target
+          value: ubiquiti
+      valuemaps:
+        - uuid: 4d6e7aedc34e40328b127d26f4bbc20e
+          name: status
+          mappings:
+            - value: '1'
+              newvalue: up
+            - value: '2'
+              newvalue: down
+        - uuid: b014fc6fac0b4b22b34f5da202b3bf68
+          name: statusoper
+          mappings:
+            - value: '1'
+              newvalue: OK
+            - value: '2'
+              newvalue: down
+        - uuid: 530620a42e564d7084bd0498dd9007fa
+          name: zabbix.host.available
+          mappings:
+            - value: '0'
+              newvalue: 'not available'
+            - value: '1'
+              newvalue: available
+            - value: '2'
+              newvalue: unknown
+  triggers:
+    - uuid: 673f7ce033ad41a8adffe801a494f9cf
+      expression: '(avg(/Ubiquiti Power Beam AC/ifInOctets.5,300s) > 75M) or (avg(/Ubiquiti Power Beam AC/ifOutOctets.5,300s) > 75M)'
+      name: 'Eth0 75Mb'
+      priority: HIGH
+  graphs:
+    - uuid: f612feb7842843fcb6c5ababb8924ccc
+      name: 'AirMax Capacity'
+      graph_items:
+        - color: 00C800
+          calc_fnc: ALL
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntAirMaxCapacity.1
+    - uuid: f07879a79c5c44499b7903b33707d95f
+      name: 'AirMax CCQ'
+      graph_items:
+        - color: 00C800
+          calc_fnc: ALL
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatCcq.1
+    - uuid: b3d9140f0e7249409202c60e04af97ea
+      name: 'AirMax Quality'
+      graph_items:
+        - color: 00C800
+          calc_fnc: ALL
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntAirMaxQuality.1
+    - uuid: 821210b1cda949de89b12fecebc17571
+      name: 'ICMP Responce Time'
+      graph_items:
+        - color: 00C800
+          item:
+            host: 'Ubiquiti Power Beam AC'
+            key: icmppingsec
+    - uuid: 697084b0b0f74df5b71959f42c5e3b46
+      name: 'Noise Floor'
+      graph_items:
+        - color: 00C800
+          calc_fnc: ALL
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatNoiseFloor.1
+    - uuid: dc5effd0f107417e8597ddaafe28da34
+      name: 'Radio Stats'
+      type: STACKED
+      graph_items:
+        - color: 00C800
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntAirMaxCapacity.1
+        - sortorder: '1'
+          color: C80000
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntAirMaxQuality.1
+        - sortorder: '2'
+          color: 0000C8
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntRadioFreq.1
+        - sortorder: '3'
+          color: C800C8
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatCcq.1
+        - sortorder: '4'
+          color: 00C8C8
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatNoiseFloor.1
+        - sortorder: '5'
+          color: C8C800
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatSignal.1
+        - sortorder: '6'
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatTxRate.1
+        - sortorder: '7'
+          color: '960000'
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatRxRate.1
+    - uuid: d3c6a6d3c3964216a48d36228aa12b3c
+      name: 'Wireless Signal'
+      graph_items:
+        - color: 00C800
+          calc_fnc: ALL
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatSignal.1
+    - uuid: 3cb20f8e72284cd5b333e539b5fa0ed4
+      name: 'Wireless Speed Capacity - New'
+      graph_items:
+        - drawtype: BOLD_LINE
+          color: 00C800
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatTxRate.1
+        - sortorder: '1'
+          drawtype: BOLD_LINE
+          color: 0000EE
+          item:
+            host: 'Ubiquiti Airmax 5.6'
+            key: ubntWlStatRxRate.1
+    - uuid: 25f00b7e9d5c48598667d6b02d19d319
+      name: 'Wlan Traffic'
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 0000EE
+          item:
+            host: 'Ubiquiti Power Beam AC'
+            key: ifInOctets.10
+        - sortorder: '1'
+          drawtype: GRADIENT_LINE
+          color: 00C800
+          item:
+            host: 'Ubiquiti Power Beam AC'
+            key: ifOutOctets.10

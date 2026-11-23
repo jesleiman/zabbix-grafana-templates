@@ -1,0 +1,554 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a47e4b4a08b2481a80f0db79d008d981
+      name: Templates/Ubiquiti
+  templates:
+    - uuid: a6a153ced1274209b5b0d81becc7874b
+      template: 'Ubiquiti UniFi AP V2'
+      name: 'Ubiquiti UniFi AP V2'
+      description: |
+        ## Description
+        
+        This template retrieve SNMP data from Unifi AP devices. MIBS requiriments: FROGFOOT-RESOURCES-MIB IANAifType-MIB IF-MIB SNMP-FRAMEWORK-MIB SNMPv2-CONF SNMPv2-MIB SNMPv2-SMI SNMPv2-TC UBNT-MIB UBNT-UniFi-MIB Author: Alex Moura
+        
+        ## Overview
+        
+        Explicação detalhada no link do site.  
+        Detailed instructions on website link.  
+          
+        This template retrieve SNMP data from Unifi AP devices.  
+          
+        Model, Firmware Version, Uptime, IP Address, MAC Address, Interface speed, LAN port Speed and real time traffic, CPU Load, CPU usage, WIFI SSIDs, Traffic/SSID, Users/SSID, AP Hostname, Channel Utilization 2G and 3G,   
+          
+        Traffic graphics, Users graphics,   
+          
+        Triggers: CPU Load, Channel usage.  
+          
+        MIBS requirements:  
+        FROGFOOT-RESOURCES-MIB . IANAifType-MIB , IF-MIB , SNMP-FRAMEWORK-MIB , SNMPv2-CONF. SNMPv2-MIB, SNMPv2-SMI, SNMPv2-TC  
+        UBNT-MIB, UBNT-UniFi-MIB  
+          
+        Tested on: (LOCAL and PROXY environments)  
+          
+        Models tested: UAP, UAP-LR. UAP-LRv2, UAP-AC-LR, UAP-AC-Lite  
+          
+        (in progress)  
+          
+        Requirements:  
+        AP firmware above 3.9.X  
+        AP SNMP feature enabled  
+          
+         If you Like let a comment to help me make this template better.  
+        Se voce gostou deixe um comentário com sugestões para melhoria do template.
+        
+        
+        
+        ## Author
+        
+        Alex Moura
+      templates:
+        - name: 'Generic by SNMP'
+      groups:
+        - name: Templates/Ubiquiti
+      items:
+        - uuid: e3b9b3eb0c9f4a1192cdc4ed03af1e87
+          name: 'CPU Utilization'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.25.3.3.1.2.196608
+          key: cpuLoad.0
+          delay: 5m
+          history: 1w
+          units: '%'
+          tags:
+            - tag: component
+              value: cpu
+        - uuid: 1cea5853cde943ca974ad10daba3d185
+          name: 'System Time'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.25.1.2.0
+          key: hrSystemDate.0
+          delay: 30s
+          history: 1d
+          value_type: TEXT
+          trends: '0'
+          tags:
+            - tag: Application
+              value: System
+        - uuid: 069f8bfbcad04c86bcab725200aafd43
+          name: 'Load average last 5 minute'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.2021.10.1.3.2
+          key: IaLoad.2
+          delay: 5m
+          history: 1w
+          value_type: FLOAT
+          tags:
+            - tag: component
+              value: load
+            - tag: component
+              value: system
+        - uuid: 16df2bd69624433299c9cc5ee0fd8d2a
+          name: 'SNMP walk physical interfaces'
+          type: SNMP_AGENT
+          snmp_oid: 'walk[1.3.6.1.2.1.2.2.1.5,1.3.6.1.2.1.2.2.1.7,1.3.6.1.2.1.2.2.1.8,1.3.6.1.2.1.2.2.1.10,1.3.6.1.2.1.2.2.1.13,1.3.6.1.2.1.2.2.1.14,1.3.6.1.2.1.2.2.1.16,1.3.6.1.2.1.2.2.1.19,1.3.6.1.2.1.2.2.1.20,1.3.6.1.2.1.31.1.1.1.1,1.3.6.1.2.1.2.2.1.2,1.3.6.1.2.1.2.2.1.3]'
+          key: net.if.walk
+          history: '0'
+          value_type: TEXT
+          trends: '0'
+          tags:
+            - tag: component
+              value: raw
+        - uuid: 438d7b7d9fb840608f164823173c8067
+          name: 'SNMP walk UniFi radios'
+          type: SNMP_AGENT
+          snmp_oid: 'walk[1.3.6.1.4.1.41112.1.6.1.1.1.1,1.3.6.1.4.1.41112.1.6.1.1.1.2,1.3.6.1.4.1.41112.1.6.1.1.1.3,1.3.6.1.4.1.41112.1.6.1.1.1.4,1.3.6.1.4.1.41112.1.6.1.1.1.5,1.3.6.1.4.1.41112.1.6.1.1.1.6,1.3.6.1.4.1.41112.1.6.1.1.1.7,1.3.6.1.4.1.41112.1.6.1.1.1.8,1.3.6.1.4.1.41112.1.6.1.1.1.9]'
+          key: unifi.radio.walk
+          history: '0'
+          value_type: TEXT
+          trends: '0'
+          tags:
+            - tag: component
+              value: raw
+        - uuid: 6227fd6357b342c692a7932046853f45
+          name: 'IP Address'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.3.1.0
+          key: unifiApSystemIp.0
+          delay: 10m
+          history: 1w
+          value_type: TEXT
+          trends: '0'
+          tags:
+            - tag: Application
+              value: 'AP Interface'
+        - uuid: 3c16b85313594ace92f398479399ba21
+          name: 'Hardware model'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.3.3.0
+          key: unifiApSystemModel.0
+          delay: 60m
+          history: 1w
+          value_type: TEXT
+          trends: '0'
+          description: 'Informa o modelo do aparelho'
+          inventory_link: MODEL
+          tags:
+            - tag: component
+              value: system
+        - uuid: 2f095dd773444d8b9706af85fdd797b0
+          name: 'Firmware version'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.3.6.0
+          key: unifiApSystemVersion.0
+          delay: 60m
+          history: 1w
+          value_type: TEXT
+          trends: '0'
+          inventory_link: SOFTWARE
+          tags:
+            - tag: component
+              value: system
+          triggers:
+            - uuid: 533367fd82354318a4fb829330529aa4
+              expression: 'last(/Ubiquiti UniFi AP V2/unifiApSystemVersion.0,#1)<>last(/Ubiquiti UniFi AP V2/unifiApSystemVersion.0,#2) and length(last(/Ubiquiti UniFi AP V2/unifiApSystemVersion.0))>0'
+              name: 'UniFi AP: Firmware has changed'
+              opdata: 'Current firmware: {ITEM.LASTVALUE1}'
+              priority: INFO
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: b542f1ae0310446aa2aa78f11b793539
+          name: 'MAC Address'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.2.1.1.4.1
+          key: unifiIfMac.1
+          delay: 30m
+          history: 1w
+          value_type: TEXT
+          trends: '0'
+          inventory_link: MACADDRESS_A
+          tags:
+            - tag: Application
+              value: 'AP Interface'
+        - uuid: 0838921a9e0b46858dd40ee7632c002f
+          name: 'LAN Traffic Incoming'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.2.1.1.6.1
+          key: unifiIfRxBytes.1
+          history: 1w
+          units: Bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+          tags:
+            - tag: Application
+              value: 'AP Interface'
+        - uuid: 21d9bba84eab47aa900632c1c8ba84e3
+          name: 'LAN Traffic Incoming Errors'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.2.1.1.8.1
+          key: unifiIfRxError.1
+          history: 1w
+          units: Error(s)
+          tags:
+            - tag: Application
+              value: 'AP Interface'
+        - uuid: fb00d3676afb4415a5e4a6d9e594b1e4
+          name: 'Interface Speed (Mbit/s)'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.2.1.1.11.1
+          key: unifiIfSpeed.1
+          delay: 60m
+          history: 1w
+          tags:
+            - tag: Application
+              value: 'AP Interface'
+        - uuid: b1bf10834fa94803af6f0834aab64e36
+          name: 'LAN Traffic Outgoing'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.2.1.1.12.1
+          key: unifiIfTxBytes.1
+          history: 1w
+          units: Bps
+          preprocessing:
+            - type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+          tags:
+            - tag: Application
+              value: 'AP Interface'
+        - uuid: 75de8a9c6c4f49689e950851ee10cb2f
+          name: 'LAN Traffic Outgoing Errors'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.2.1.1.14.1
+          key: unifiIfTxError.1
+          history: 1w
+          units: Error(s)
+          tags:
+            - tag: Application
+              value: 'AP Interface'
+        - uuid: c8383e994dad49e6b1b02c9a79f9c187
+          name: 'Channel utilization 2G (BGN)'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.1.1.1.6.1
+          key: unifiRadioCuTotal.1
+          delay: 1d
+          history: 1w
+          units: '%'
+          description: 'Informa o modelo do aparelho'
+          tags:
+            - tag: Application
+              value: 'Virtual Interfaces'
+          triggers:
+            - uuid: b6b83617f2004ef8ba70ffc654072c4c
+              expression: 'avg(/Ubiquiti UniFi AP V2/unifiRadioCuTotal.1,300s)=80'
+              name: 'Channel utilization 2G on {HOST.NAME} high'
+              priority: WARNING
+            - uuid: a3c3f99cd0084e9898bb61c48659f9d4
+              expression: 'avg(/Ubiquiti UniFi AP V2/unifiRadioCuTotal.1,300s)=90'
+              name: 'Channel utilization 2G on {HOST.NAME} very high'
+              priority: AVERAGE
+        - uuid: 2710974a386e4d1bb502b5c6f1f4268c
+          name: 'Channel utilization 5G (AC)'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.1.1.1.6.2
+          key: unifiRadioCuTotal.2
+          delay: 1d
+          history: 1w
+          units: '%'
+          description: 'Informa o modelo do aparelho'
+          tags:
+            - tag: Application
+              value: 'Virtual Interfaces'
+          triggers:
+            - uuid: 85a1fc62400e4532966cd15f39a6e925
+              expression: 'avg(/Ubiquiti UniFi AP V2/unifiRadioCuTotal.2,300s)=80'
+              name: 'Channel utilization 5G on {HOST.NAME} high'
+              priority: WARNING
+            - uuid: b8b947afb46b42128bf81a86441e843c
+              expression: 'avg(/Ubiquiti UniFi AP V2/unifiRadioCuTotal.2,300s)=90'
+              name: 'Channel utilization 5G on {HOST.NAME} very high'
+              priority: AVERAGE
+        - uuid: be3d58bcb3fa478facfa8802843bb490
+          name: 'Channel utilization 6G (AC)'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.1.1.1.6.3
+          key: unifiRadioCuTotal.3
+          delay: 1d
+          history: 1w
+          units: '%'
+          description: 'Informa o modelo do aparelho'
+          tags:
+            - tag: Application
+              value: 'Virtual Interfaces'
+        - uuid: fc1bd6e2fcb64767bd875f7cd6daa6ce
+          name: 'Channel 2G (N/G)'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.1.2.1.4.1
+          key: unifiVapChannel.1
+          history: 1w
+          tags:
+            - tag: Application
+              value: System
+        - uuid: 7c9ef5f259c94902b11f2df81d92f311
+          name: 'Channel 5G (N/AC)'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41112.1.6.1.2.1.4.5
+          key: unifiVapChannel.5
+          history: 1w
+          description: 'Informa o modelo do aparelho'
+          tags:
+            - tag: Application
+              value: System
+        - uuid: 4a74599ca1344f98b89dcd483b8af20d
+          name: 'Cached memory'
+          type: SNMP_AGENT
+          snmp_oid: 'get[1.3.6.1.4.1.2021.4.15.0]'
+          key: 'vm.memory.cached[memCached.0]'
+          delay: 5m
+          units: B
+          tags:
+            - tag: component
+              value: memory
+        - uuid: a49f0a15c11e45099d437b5c3c4208fd
+          name: 'Free memory'
+          type: SNMP_AGENT
+          snmp_oid: 'get[1.3.6.1.4.1.2021.4.6.0]'
+          key: 'vm.memory.free[memFree.0]'
+          delay: 5m
+          units: B
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1024'
+          tags:
+            - tag: component
+              value: memory
+        - uuid: e8e1f1a51a8b4b1399c84ec54fef293c
+          name: 'Total memory'
+          type: SNMP_AGENT
+          snmp_oid: 'get[1.3.6.1.4.1.2021.4.5.0]'
+          key: 'vm.memory.total[memTotal.0]'
+          delay: 5m
+          units: B
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1024'
+          tags:
+            - tag: component
+              value: memory
+      discovery_rules:
+        - uuid: c2e209ef450a4d748be3a8f6c0401759
+          name: 'Wifi Virtual Interfaces'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#UNIFIVAPESSID},.1.3.6.1.4.1.41112.1.6.1.2.1.6, {#UNIVAPRADIO},.1.3.6.1.4.1.41112.1.6.1.2.1.9]'
+          key: unifiVapEssId
+          delay: 30s
+          lifetime: 30d
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: 5278b3c51242401580d2d45c4d4f01b5
+              name: 'WIFI Channel {#UNIVAPRADIO} on {#UNIFIVAPESSID}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.41112.1.6.1.2.1.4.{#SNMPINDEX}'
+              key: 'unifiVapChannel[{#UNIFIVAPESSID},{#UNIVAPRADIO}]'
+              tags:
+                - tag: Application
+                  value: 'Virtual Interfaces'
+            - uuid: 07c762c6dbc64439bf6100dc8c005c6a
+              name: 'Users {#UNIVAPRADIO} on {#UNIFIVAPESSID}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.41112.1.6.1.2.1.8.{#SNMPINDEX}'
+              key: 'unifiVapNumStations[{#UNIFIVAPESSID},{#UNIVAPRADIO}]'
+              delay: 30s
+              units: Users
+              tags:
+                - tag: Application
+                  value: 'Virtual Interfaces'
+            - uuid: f548899b0a9e4e38a3edd7e8f0956be2
+              name: 'Traffic Incoming {#UNIVAPRADIO} on {#UNIFIVAPESSID}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.41112.1.6.1.2.1.10.{#SNMPINDEX}'
+              key: 'unifiVapRxBytes[{#UNIFIVAPESSID},{#UNIVAPRADIO}]'
+              delay: 30s
+              units: Bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              tags:
+                - tag: Application
+                  value: 'Virtual Interfaces'
+            - uuid: cbcb004b4a9144e6a6a6bd0578e38543
+              name: 'Traffic Incoming Errors per Second {#UNIVAPRADIO} on {#UNIFIVAPESSID}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.41112.1.6.1.2.1.13.{#SNMPINDEX}'
+              key: 'unifiVapRxErrors[{#UNIFIVAPESSID},{#UNIVAPRADIO}]'
+              delay: 60s
+              units: Error/s
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              tags:
+                - tag: Application
+                  value: 'Virtual Interfaces'
+            - uuid: b09c2dc994e94f5d92ddbeb921a39d4f
+              name: 'Traffic Outgoing {#UNIVAPRADIO} on {#UNIFIVAPESSID}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.41112.1.6.1.2.1.16.{#SNMPINDEX}'
+              key: 'unifiVapTxBytes[{#UNIFIVAPESSID},{#UNIVAPRADIO}]'
+              delay: 30s
+              units: Bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              tags:
+                - tag: Application
+                  value: 'Virtual Interfaces'
+            - uuid: b01ee4e1d8874b47bd9cbb8b233770aa
+              name: 'Traffic Outgoing Errors per Second {#UNIVAPRADIO} on {#UNIFIVAPESSID}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.41112.1.6.1.2.1.18.{#SNMPINDEX}'
+              key: 'unifiVapTxErrors[{#UNIFIVAPESSID},{#UNIVAPRADIO}]'
+              delay: 60s
+              units: Error/s
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              tags:
+                - tag: Application
+                  value: 'Virtual Interfaces'
+          graph_prototypes:
+            - uuid: 28f6f2e629b94f559564bfe7284d1750
+              name: 'Users {#UNIVAPRADIO} connected on {#UNIFIVAPESSID}'
+              show_work_period: 'NO'
+              show_triggers: 'NO'
+              type: STACKED
+              graph_items:
+                - color: 1A7C11
+                  item:
+                    host: 'Ubiquiti UniFi AP V2'
+                    key: 'unifiVapNumStations[{#UNIFIVAPESSID},{#UNIVAPRADIO}]'
+      tags:
+        - tag: class
+          value: network
+        - tag: target
+          value: ubiquiti
+        - tag: target
+          value: unifi-ap
+      macros:
+        - macro: '{$ICMP_LOSS_WARN}'
+          value: '20'
+          description: 'Warning threshold of ICMP packet loss in percent.'
+        - macro: '{$ICMP_RESPONSE_TIME_WARN}'
+          value: '0.2'
+          description: 'Warning threshold of average ICMP response time in seconds.'
+        - macro: '{$IF.DISCARDS.WARN}'
+          value: '5'
+          description: 'Warning threshold of discarded packets per second. Supports interface-name context.'
+        - macro: '{$IF.ERRORS.WARN}'
+          value: '0'
+          description: 'Warning threshold of errored packets per second. Supports interface-name context.'
+        - macro: '{$IF.SPEED.MIN}'
+          value: '100000000'
+          description: 'Minimum expected physical interface speed in bps. Supports interface-name context.'
+        - macro: '{$IFCONTROL}'
+          value: '1'
+          description: 'Set to 0 to disable link-state alerts. Supports interface-name context.'
+        - macro: '{$NET.IF.IFNAME.MATCHES}'
+          value: '^eth[0-9]+$'
+          description: 'Regular expression selecting physical interfaces for discovery.'
+        - macro: '{$RADIO.CHANNEL.UTIL.MAX}'
+          value: '80'
+          description: 'Maximum channel utilization in percent. Supports radio-band context (ng or na).'
+        - macro: '{$SNMP.TIMEOUT}'
+          value: 5m
+          description: 'Time interval for the SNMP availability trigger.'
+      valuemaps:
+        - uuid: ec151c7b09144512a965c24ef246d005
+          name: 'IF-MIB::ifOperStatus'
+          mappings:
+            - value: '1'
+              newvalue: up
+            - value: '2'
+              newvalue: down
+            - value: '3'
+              newvalue: testing
+            - value: '4'
+              newvalue: unknown
+            - value: '5'
+              newvalue: dormant
+            - value: '6'
+              newvalue: notPresent
+            - value: '7'
+              newvalue: lowerLayerDown
+        - uuid: 9996ea6c6b9b437da5f03ecf376315db
+          name: 'Service state'
+          mappings:
+            - value: '2'
+              newvalue: Down
+            - value: '1'
+              newvalue: Up
+        - uuid: c775ff49bd864419b9a2a71516f2f744
+          name: zabbix.host.available
+          mappings:
+            - value: '0'
+              newvalue: 'not available'
+            - value: '1'
+              newvalue: available
+            - value: '2'
+              newvalue: unknown
+  graphs:
+    - uuid: 57bea729e862422d92e8088649b34462
+      name: 'Channel Utilization'
+      ymin_type_1: FIXED
+      ymax_type_1: FIXED
+      graph_items:
+        - color: 1A7C11
+          item:
+            host: 'Ubiquiti UniFi AP V2'
+            key: unifiRadioCuTotal.1
+        - sortorder: '1'
+          color: F63100
+          item:
+            host: 'Ubiquiti UniFi AP V2'
+            key: unifiRadioCuTotal.2
+    - uuid: 95f7a11835b647e2832372124322398d
+      name: 'CPU load'
+      ymin_type_1: FIXED
+      graph_items:
+        - sortorder: '1'
+          color: '000099'
+          item:
+            host: 'Ubiquiti UniFi AP V2'
+            key: IaLoad.2
+    - uuid: 6dcb7b145c514a3ab77b73d83e11c370
+      name: 'CPU utilization'
+      type: STACKED
+      ymax_type_1: FIXED
+      graph_items:
+        - color: 1A7C11
+          item:
+            host: 'Ubiquiti UniFi AP V2'
+            key: cpuLoad.0
+    - uuid: 54c231ee93764568939421f8785d149a
+      name: 'Network Traffic'
+      show_work_period: 'NO'
+      show_triggers: 'NO'
+      type: STACKED
+      graph_items:
+        - color: 1A7C11
+          item:
+            host: 'Ubiquiti UniFi AP V2'
+            key: unifiIfRxBytes.1
+        - sortorder: '1'
+          color: F63100
+          item:
+            host: 'Ubiquiti UniFi AP V2'
+            key: unifiIfTxBytes.1

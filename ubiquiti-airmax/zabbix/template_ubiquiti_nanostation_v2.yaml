@@ -1,0 +1,222 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a47e4b4a08b2481a80f0db79d008d981
+      name: Templates/Ubiquiti
+  templates:
+    - uuid: c7fc5d65aace462995ea8476551388ba
+      template: 'Ubiquiti Nanostation V2'
+      name: 'Ubiquiti Nanostation V2'
+      description: Nanostation
+      vendor:
+        name: jesleiman
+        version: 1.0-1      
+      templates:
+        - name: 'Generic by SNMP'
+        - name: 'Ubiquiti Airmax 5.6'
+      groups:
+        - name: Templates/Ubiquiti
+      items:
+        - uuid: 916d0f5a08924f0e9727b120bf9be9a7
+          name: 'Firmware version'
+          type: SNMP_AGENT
+          snmp_oid: '1.2.840.10036.3.1.2.1.4.{$UBNT_INDEX}'
+          key: ubnt.hw.firmware
+          delay: 1d
+          history: 7d
+          value_type: CHAR
+          trends: '0'
+          inventory_link: OS
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - '\.v([0-9]+\.[0-9]+\.[0-9]+)'
+                - v\1
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          tags:
+            - tag: component
+              value: system
+        - uuid: a69ae74660594c239afced7bb040ce21
+          name: 'Hardware model'
+          type: SNMP_AGENT
+          snmp_oid: '1.2.840.10036.3.1.2.1.3.{$UBNT_INDEX}'
+          key: ubnt.hw.model
+          delay: 1d
+          history: 7d
+          value_type: CHAR
+          trends: '0'
+          inventory_link: MODEL
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          tags:
+            - tag: component
+              value: system
+        - uuid: 0c7077df4b1140d9bf8f307ec295981e
+          name: Latitude
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.3.0
+          key: ubnt.latitude
+          delay: 1d
+          history: 7d
+          value_type: TEXT
+          trends: '0'
+          inventory_link: LOCATION_LAT
+          tags:
+            - tag: Application
+              value: GEO
+        - uuid: 62b020a8c3484390aa1584bed58bef8d
+          name: Longitude
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.4.0
+          key: ubnt.longitude
+          delay: 1d
+          history: 7d
+          value_type: TEXT
+          trends: '0'
+          inventory_link: LOCATION_LON
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - '^(-[0-9]+)\.-([0-9]+)$'
+                - \1.\2
+          tags:
+            - tag: Application
+              value: GEO
+      discovery_rules:
+        - uuid: a4d02d16938948ba9de6c2cd814fb728
+          name: 'Network interfaces discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#IFNAME},.1.3.6.1.2.1.2.2.1.2,{#IFOPERSTATUS},.1.3.6.1.2.1.2.2.1.8]'
+          key: ubnt.if.discovery
+          delay: 1h
+          filter:
+            conditions:
+              - macro: '{#IFNAME}'
+                value: '^(ath0(\.[0-9]+)?|eth0|eth1)$'
+                formulaid: A
+              - macro: '{#IFOPERSTATUS}'
+                value: ^1$
+                formulaid: B
+          item_prototypes:
+            - uuid: b91b64f8ee1946eea62967347a4f3ca6
+              name: 'Interface {#IFNAME}: Bits received'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.2.2.1.10.{#SNMPINDEX}'
+              key: 'net.if.in[ifHCInOctets.{#SNMPINDEX}]'
+              history: 14d
+              value_type: FLOAT
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: component
+                  value: network
+                - tag: interface
+                  value: '{#IFNAME}'
+            - uuid: 73075f0506314f10a621b59c3ed67e36
+              name: 'Interface {#IFNAME}: Bits sent'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.2.2.1.16.{#SNMPINDEX}'
+              key: 'net.if.out[ifHCOutOctets.{#SNMPINDEX}]'
+              history: 14d
+              value_type: FLOAT
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: component
+                  value: network
+                - tag: interface
+                  value: '{#IFNAME}'
+            - uuid: d6b76a440d0f446f9078593efeaaec74
+              name: 'Interface {#IFNAME}: Operational status'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.2.1.2.2.1.8.{#SNMPINDEX}'
+              key: 'net.if.status[ifOperStatus.{#SNMPINDEX}]'
+              delay: 5m
+              history: 14d
+              value_type: FLOAT
+              valuemap:
+                name: statusoper
+              tags:
+                - tag: component
+                  value: network
+                - tag: interface
+                  value: '{#IFNAME}'
+              trigger_prototypes:
+                - uuid: c5259742d4b14321ab27a96f0b14b568
+                  expression: 'last(/Ubiquiti Nanostation V2/net.if.status[ifOperStatus.{#SNMPINDEX}])<>1'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'last(/Ubiquiti Nanostation V2/net.if.status[ifOperStatus.{#SNMPINDEX}])=1'
+                  name: 'Interface {#IFNAME}: Link down'
+          graph_prototypes:
+            - uuid: 20ec5218e8ed4d6fb94fd12034485d01
+              name: 'Interface {#IFNAME}: Network traffic'
+              graph_items:
+                - color: 1A7C11
+                  calc_fnc: ALL
+                  item:
+                    host: 'Ubiquiti Nanostation V2'
+                    key: 'net.if.in[ifHCInOctets.{#SNMPINDEX}]'
+                - sortorder: '1'
+                  color: '274482'
+                  calc_fnc: ALL
+                  item:
+                    host: 'Ubiquiti Nanostation V2'
+                    key: 'net.if.out[ifHCOutOctets.{#SNMPINDEX}]'
+      macros:
+        - macro: '{$UBNT_INDEX}'
+          value: '8'
+          description: '"5" NanoStation M365, "7" Nano 5 AC Loco y "8" Nano 5 AC'
+      valuemaps:
+        - uuid: 1d1e4846d52541319d59d14b52c1cb72
+          name: status
+          mappings:
+            - value: '1'
+              newvalue: up
+            - value: '2'
+              newvalue: down
+        - uuid: 1b92117ad9864ea98d1b32066607a161
+          name: statusoper
+          mappings:
+            - value: '1'
+              newvalue: OK
+            - value: '2'
+              newvalue: down
+  triggers:
+    - uuid: 5c54857fe81d41368148614d47a980b9
+      expression: 'avg(/Ubiquiti Nanostation V2/ubntWlStatSignal.1,5m)<-75'
+      recovery_mode: RECOVERY_EXPRESSION
+      recovery_expression: 'avg(/Ubiquiti Nanostation V2/ubntWlStatSignal.1,5m)>-72'
+      name: 'Wireless signal is degraded ({ITEM.LASTVALUE})'
+      opdata: 'Signal: {ITEM.LASTVALUE1}'
+      priority: WARNING
+      dependencies:
+        - name: 'No disponible mediante ping ICMP'
+          expression: 'max(/Ubiquiti Nanostation V2/icmpping,#5)=0'
+          recovery_expression: 'min(/Ubiquiti Nanostation V2/icmpping,#3)=1'
+      tags:
+        - tag: scope
+          value: performance
+  graphs:
+    - uuid: 23154921b9554bfeb8f740aba9db9a4f
+      name: 'ICMP Responce Time'
+      graph_items:
+        - color: 00C800
+          item:
+            host: 'Ubiquiti Nanostation V2'
+            key: icmppingsec
