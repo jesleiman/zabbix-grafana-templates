@@ -118,7 +118,7 @@ zabbix_export:
           value_type: FLOAT
           trends: '0'
           units: '%'
-          params: '(last(//MemUsed)-last(//MemBuffers)-last(//MemCached))/last(//MemTotal)*100'
+          params: '(last(//MemTotal)-last(//MemAvailable)-last(//MemBuffers)-last(//MemCached))/last(//MemTotal)*100'
           preprocessing:
             - type: JAVASCRIPT
               parameters:
@@ -130,9 +130,9 @@ zabbix_export:
               value: system
           triggers:
             - uuid: a30deff68b824ca2b8cd81ae889cdf2f
-              expression: 'min(/Ubiquiti EdgeMAX/MemUtil,5m)>{$MEMORY.UTIL.MAX}'
+              expression: 'min(/Ubiquiti EdgeMAX V2/MemUtil,5m)>{$MEMORY.UTIL.MAX}'
               recovery_mode: RECOVERY_EXPRESSION
-              recovery_expression: 'max(/Ubiquiti EdgeMAX/MemUtil,5m)<{$MEMORY.UTIL.MAX}'
+              recovery_expression: 'max(/Ubiquiti EdgeMAX V2/MemUtil,5m)<{$MEMORY.UTIL.MAX}'
               name: 'High memory utilization ( >{$MEMORY.UTIL.MAX}% for 5m)'
               opdata: 'Memory utilization: {ITEM.LASTVALUE1}'
               priority: WARNING
@@ -273,6 +273,8 @@ zabbix_export:
                 - type: CHECK_NOT_SUPPORTED
                   parameters:
                     - '-1'
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
               tags:
                 - tag: Application
                   value: 'interface ip address'
@@ -280,7 +282,7 @@ zabbix_export:
                   value: network
               trigger_prototypes:
                 - uuid: b3ee11aac54940819c9615d7ced39e33
-                  expression: 'last(/Ubiquiti EdgeMAX/net.if.ip[ipAddrEntry.{#SNMPINDEX}],#1)<>last(/Ubiquiti EdgeMAX/net.if.ip[ipAddrEntry.{#SNMPINDEX}],#2) and length(last(/Ubiquiti EdgeMAX/net.if.ip[ipAddrEntry.{#SNMPINDEX}]))>0'
+                  expression: 'last(/Ubiquiti EdgeMAX V2/net.if.ip[ipAddrEntry.{#SNMPINDEX}],#1)<>last(/Ubiquiti EdgeMAX V2/net.if.ip[ipAddrEntry.{#SNMPINDEX}],#2) and length(last(/Ubiquiti EdgeMAX V2/net.if.ip[ipAddrEntry.{#SNMPINDEX}]))>0'
                   recovery_mode: NONE
                   name: 'EdgeMAX: Interface {#IFNAME} address has changed'
                   event_name: 'EdgeMAX: Interface {#IFNAME} address on {HOST.HOST} has changed from {FUNCTION.VALUE2} to {FUNCTION.VALUE3}.'
@@ -343,7 +345,7 @@ zabbix_export:
                   value: network
               trigger_prototypes:
                 - uuid: f28b60068151468daf04255aca727604
-                  expression: 'last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}])<>1'
+                  expression: 'last(/Ubiquiti EdgeMAX V2/net.if.status[ifOperStatus.{#SNMPINDEX}])<>1'
                   name: 'EdgeMAX: Interface {#IFNAME} is not up (1).'
                   event_name: 'EdgeMAX: Interface {#IFNAME} on {HOST.HOST} status is not up (1).'
                   opdata: 'Interface is currently {ITEM.VALUE1}'
@@ -351,9 +353,9 @@ zabbix_export:
                   priority: AVERAGE
                   description: 'Interface status is not up (1). Get the interface up again to close the problem automatically.'
                 - uuid: ed8cfda8eff44c01a8c18956bb18aef5
-                  expression: 'last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)<>last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}],#2) and last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}],#2)=1'
+                  expression: 'last(/Ubiquiti EdgeMAX V2/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)<>last(/Ubiquiti EdgeMAX V2/net.if.status[ifOperStatus.{#SNMPINDEX}],#2) and last(/Ubiquiti EdgeMAX V2/net.if.status[ifOperStatus.{#SNMPINDEX}],#2)=1'
                   recovery_mode: RECOVERY_EXPRESSION
-                  recovery_expression: 'last(/Ubiquiti EdgeMAX/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)=1'
+                  recovery_expression: 'last(/Ubiquiti EdgeMAX V2/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)=1'
                   name: 'EdgeMAX: Interface {#IFNAME} status has changed'
                   event_name: 'EdgeMAX: Interface {#IFNAME} on {HOST.HOST} status has changed from up (1).'
                   opdata: 'Interface is currently {ITEM.VALUE1}'
@@ -368,13 +370,13 @@ zabbix_export:
                 - color: F63100
                   calc_fnc: ALL
                   item:
-                    host: 'Ubiquiti EdgeMAX'
+                    host: 'Ubiquiti EdgeMAX V2'
                     key: 'net.if.in[ifHCInOctets.{#SNMPINDEX}]'
                 - sortorder: '1'
                   color: 199C0D
                   calc_fnc: ALL
                   item:
-                    host: 'Ubiquiti EdgeMAX'
+                    host: 'Ubiquiti EdgeMAX V2'
                     key: 'net.if.out[ifHCOutOctets.{#SNMPINDEX}]'
       macros:
         - macro: '{$LOAD_AVG_PER_CPU.MAX.WARN}'
@@ -399,7 +401,7 @@ zabbix_export:
                     - type: GRAPH_PROTOTYPE
                       name: graphid
                       value:
-                        host: 'Ubiquiti EdgeMAX'
+                        host: 'Ubiquiti EdgeMAX V2'
                         name: 'Interface {#IFNAME}: Network traffic'
                     - type: STRING
                       name: reference
@@ -418,7 +420,7 @@ zabbix_export:
                     - type: ITEM
                       name: itemid.0
                       value:
-                        host: 'Ubiquiti EdgeMAX'
+                        host: 'Ubiquiti EdgeMAX V2'
                         key: system.name
                     - type: INTEGER
                       name: show.0
@@ -437,7 +439,7 @@ zabbix_export:
                     - type: GRAPH
                       name: graphid.0
                       value:
-                        host: 'Ubiquiti EdgeMAX'
+                        host: 'Ubiquiti EdgeMAX V2'
                         name: 'EdgeMAX: CPU Load'
                     - type: STRING
                       name: reference
@@ -450,7 +452,7 @@ zabbix_export:
                     - type: GRAPH
                       name: graphid.0
                       value:
-                        host: 'Ubiquiti EdgeMAX'
+                        host: 'Ubiquiti EdgeMAX V2'
                         name: 'EdgeMAX:  Memory usage'
                     - type: STRING
                       name: reference
@@ -463,7 +465,7 @@ zabbix_export:
                     - type: GRAPH
                       name: graphid.0
                       value:
-                        host: 'Ubiquiti EdgeMAX'
+                        host: 'Ubiquiti EdgeMAX V2'
                         name: 'EdgeMAX: System Load'
                     - type: STRING
                       name: reference
@@ -476,7 +478,7 @@ zabbix_export:
                     - type: ITEM
                       name: itemid.0
                       value:
-                        host: 'Ubiquiti EdgeMAX'
+                        host: 'Ubiquiti EdgeMAX V2'
                         key: 'system.net.uptime[sysUpTime.0]'
                     - type: INTEGER
                       name: show.0
@@ -489,7 +491,7 @@ zabbix_export:
                     - type: ITEM
                       name: itemid.0
                       value:
-                        host: 'Ubiquiti EdgeMAX'
+                        host: 'Ubiquiti EdgeMAX V2'
                         key: 'system.hw.uptime[hrSystemUptime.0]'
                     - type: INTEGER
                       name: show.0
@@ -503,7 +505,7 @@ zabbix_export:
                     - type: GRAPH
                       name: graphid.0
                       value:
-                        host: 'Ubiquiti EdgeMAX'
+                        host: 'Ubiquiti EdgeMAX V2'
                         name: 'EdgeMAX: Memory Used'
                     - type: STRING
                       name: reference
@@ -534,7 +536,7 @@ zabbix_export:
         - color: 199C0D
           calc_fnc: ALL
           item:
-            host: 'Ubiquiti EdgeMAX'
+            host: 'Ubiquiti EdgeMAX V2'
             key: system.cpu.util
     - uuid: 66415b709399470bb181f7c604f7b00a
       name: 'EdgeMAX:  Memory usage'
@@ -546,19 +548,19 @@ zabbix_export:
         - color: F63100
           calc_fnc: MIN
           item:
-            host: 'Ubiquiti EdgeMAX'
+            host: 'Ubiquiti EdgeMAX V2'
             key: MemBuffers
         - sortorder: '1'
           color: 2774A4
           calc_fnc: MIN
           item:
-            host: 'Ubiquiti EdgeMAX'
+            host: 'Ubiquiti EdgeMAX V2'
             key: MemCached
         - sortorder: '2'
           color: 199C0D
           calc_fnc: MIN
           item:
-            host: 'Ubiquiti EdgeMAX'
+            host: 'Ubiquiti EdgeMAX V2'
             key: MemAvailable
     - uuid: f260a63bc3b04c3b80b47f83bb05ed9c
       name: 'EdgeMAX: Memory Used'
@@ -568,7 +570,7 @@ zabbix_export:
         - color: 199C0D
           calc_fnc: ALL
           item:
-            host: 'Ubiquiti EdgeMAX'
+            host: 'Ubiquiti EdgeMAX V2'
             key: MemUtil
     - uuid: f6837489bd7246fcb6296b62a604b6a1
       name: 'EdgeMAX: System Load'
@@ -578,5 +580,5 @@ zabbix_export:
           color: F63100
           calc_fnc: ALL
           item:
-            host: 'Ubiquiti EdgeMAX'
+            host: 'Ubiquiti EdgeMAX V2'
             key: Load5Minute
