@@ -55,7 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/jesleiman/zabbix-grafana-templates/
 Descarga o copia el archivo `.conf` correspondiente desde [`agent/`](agent/) hacia `/etc/zabbix/zabbix_agent2.d/updates.conf` (reemplaza `<DISTRO>` por `rhel`, `ubuntu`, `debian` o `suse`):
 
 ```bash
-curl -o /etc/zabbix/zabbix_agent2.d/updates.conf https://githubusercontent.com<DISTRO>.conf
+curl -o /etc/zabbix/zabbix_agent2.d/updates.conf https://raw.githubusercontent.com/jesleiman/zabbix-grafana-templates/refs/heads/main/linux-updates/agent/updates-<DISTRO>.conf
 ```
 
 ### 2. Ajustar Timeout y Reiniciar Zabbix Agent 2
