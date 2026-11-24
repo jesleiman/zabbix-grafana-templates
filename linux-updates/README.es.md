@@ -46,7 +46,7 @@ Utiliza `zypper` de forma nativa sin paquetes adicionales.
 Ejecuta el script instalador como `root` (o con `sudo`). Detecta automáticamente tu distribución Linux, activa los temporizadores de caché, crea `/etc/zabbix/zabbix_agent2.d/updates.conf`, ajusta `Timeout=15`, reinicia el agente y prueba las claves:
 
 ```bash
-curl -fsSL https://githubusercontent.com | sudo bash
+curl -fsSL https://raw.githubusercontent.com/jesleiman/zabbix-grafana-templates/refs/heads/main/linux-updates/install-updates-monitor.sh | sudo bash
 ```
 
 ### 🛠️ Opción B: Instalación Manual
