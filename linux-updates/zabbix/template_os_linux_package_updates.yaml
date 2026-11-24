@@ -1,0 +1,55 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 846977d1dfed4968bc5f8bdb363285bc
+      name: 'Templates/Operating systems'
+  templates:
+    - uuid: 9188a329b63e49d9a9e88718919b1710
+      template: 'OS Linux - Package Updates'
+      name: 'OS Linux - Package Updates'
+      vendor:
+        name: jesleiman
+        version: 1.0-1      
+      groups:
+        - name: 'Templates/Operating systems'
+      items:
+        - uuid: 3322b607634a43729077c6f80fa158bc
+          name: 'Actualizaciones de seguridad pendientes'
+          key: system.updates.security
+          delay: 6h
+          value_type: FLOAT
+          trends: '0'
+          timeout: 10s
+          tags:
+            - tag: application
+              value: updates
+            - tag: component
+              value: os
+          triggers:
+            - uuid: 886170ed20c0419f80fe302ef2db67ff
+              expression: 'last(/OS Linux - Package Updates/system.updates.security)>0'
+              name: '{HOST.NAME}: Tiene {ITEM.LASTVALUE} parches de SEGURIDAD pendientes'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: security
+        - uuid: 427581b31b024b938df3361f8498ed92
+          name: 'Actualizaciones pendientes (Total)'
+          key: system.updates.total
+          delay: 12h
+          value_type: FLOAT
+          trends: '0'
+          timeout: 10s
+          tags:
+            - tag: application
+              value: updates
+            - tag: component
+              value: os
+          triggers:
+            - uuid: 69d3f2fdf84547b8950edf9d004379b6
+              expression: 'last(/OS Linux - Package Updates/system.updates.total)>0'
+              name: '{HOST.NAME}: Tiene {ITEM.LASTVALUE} actualizaciones pendientes'
+              priority: INFO
+              tags:
+                - tag: scope
+                  value: notice

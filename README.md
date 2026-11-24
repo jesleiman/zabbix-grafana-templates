@@ -23,6 +23,8 @@ A curated collection of custom **Zabbix templates** and **Grafana dashboards** f
 | **Ubiquiti airMAX / airOS** | Zabbix Only | SNMPv2c | `Ubiquiti GEO` & `Rol AP` | [View Guide](ubiquiti-airmax/README.md) |
 | **Ubiquiti EdgeMAX & EdgeSwitch** | Zabbix Only | SNMPv2c | — | [View Guide](ubiquiti-edgemax-edgeswitch/README.md) |
 | **Ubiquiti UniFi (U6-LR)** | Zabbix Only | SNMPv2c | — | [View Guide](ubiquiti-unifi/README.md) |
+| **Linux OS Package Updates** | Zabbix Only | Zabbix Agent 2 (`UserParameter`) | `updates-*.conf` (RHEL/Ubuntu/Debian/SUSE) | [View Guide](linux-updates/README.md) |
+
 
 *(More devices and templates coming soon...)*
 

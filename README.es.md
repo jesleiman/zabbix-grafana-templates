@@ -22,6 +22,7 @@ Colección de **plantillas de Zabbix** y **dashboards de Grafana** personalizado
 | **Ubiquiti airMAX / airOS** | Zabbix Only | SNMPv2c | `Ubiquiti GEO` & `Rol AP` | [View Guide](ubiquiti-airmax/README.md) |
 | **Ubiquiti EdgeMAX & EdgeSwitch** | Zabbix Only | SNMPv2c | — | [View Guide](ubiquiti-edgemax-edgeswitch/README.md) |
 | **Ubiquiti UniFi (U6-LR)** | Zabbix Only | SNMPv2c | — | [View Guide](ubiquiti-unifi/README.md) |
+| **Actualizaciones SO Linux** | Solo Zabbix | Zabbix Agent 2 (`UserParameter`) | `updates-*.conf` (RHEL/Ubuntu/Debian/SUSE) | [Ver Guía](linux-updates/README.es.md) |
 
 *(Más dispositivos y plantillas próximamente...)*
 
