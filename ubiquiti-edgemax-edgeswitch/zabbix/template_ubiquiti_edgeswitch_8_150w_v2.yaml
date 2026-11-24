@@ -9,7 +9,7 @@ zabbix_export:
       name: 'Ubiquiti EdgeSwitch 8 150W V2'
       vendor:
         name: jesleiman
-        version: 1.0-1      
+        version: 1.0-1
       templates:
         - name: 'Generic by SNMP'
       groups:
@@ -35,9 +35,9 @@ zabbix_export:
               value: system
           triggers:
             - uuid: 95f37d4eabf8445b971e7bc15dc0eb35
-              expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/Load1Minute)>{$LOAD_AVG_PER_CPU.MAX.WARN}'
+              expression: 'last(/Ubiquiti EdgeSwitch 8 150W V2/Load1Minute)>{$LOAD_AVG_PER_CPU.MAX.WARN}'
               recovery_mode: RECOVERY_EXPRESSION
-              recovery_expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/Load1Minute)<{$LOAD_AVG_PER_CPU.MAX.WARN}'
+              recovery_expression: 'last(/Ubiquiti EdgeSwitch 8 150W V2/Load1Minute)<{$LOAD_AVG_PER_CPU.MAX.WARN}'
               name: 'Load average is too high (per CPU load over {$LOAD_AVG_PER_CPU.MAX.WARN} for 1m)'
               opdata: 'Load averages(1m): {ITEM.LASTVALUE1}'
               priority: AVERAGE
@@ -196,7 +196,7 @@ zabbix_export:
                   value: network
               trigger_prototypes:
                 - uuid: 4a1cb3211bb8438daeea7f290460c16b
-                  expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}])<>1'
+                  expression: 'last(/Ubiquiti EdgeSwitch 8 150W V2/net.if.status[ifOperStatus.{#SNMPINDEX}])<>1'
                   name: 'EdgeMAX: Interface {#IFNAME} is not up (1).'
                   event_name: 'EdgeMAX: Interface {#IFNAME} on {HOST.HOST} status is not up (1).'
                   opdata: 'Interface is currently {ITEM.VALUE1}'
@@ -204,9 +204,9 @@ zabbix_export:
                   priority: AVERAGE
                   description: 'Interface status is not up (1). Get the interface up again to close the problem automatically.'
                 - uuid: d46a0aba061f42618440cd292093c49e
-                  expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)<>last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}],#2) and last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}],#2)=1'
+                  expression: 'last(/Ubiquiti EdgeSwitch 8 150W V2/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)<>last(/Ubiquiti EdgeSwitch 8 150W V2/net.if.status[ifOperStatus.{#SNMPINDEX}],#2) and last(/Ubiquiti EdgeSwitch 8 150W V2/net.if.status[ifOperStatus.{#SNMPINDEX}],#2)=1'
                   recovery_mode: RECOVERY_EXPRESSION
-                  recovery_expression: 'last(/Ubiquiti EdgeSwitch 8 150W SNMP/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)=1'
+                  recovery_expression: 'last(/Ubiquiti EdgeSwitch 8 150W V2/net.if.status[ifOperStatus.{#SNMPINDEX}],#1)=1'
                   name: 'EdgeMAX: Interface {#IFNAME} status has changed'
                   event_name: 'EdgeMAX: Interface {#IFNAME} on {HOST.HOST} status has changed from up (1).'
                   opdata: 'Interface is currently {ITEM.VALUE1}'
@@ -221,13 +221,13 @@ zabbix_export:
                 - color: F63100
                   calc_fnc: ALL
                   item:
-                    host: 'Ubiquiti EdgeSwitch 8 150W SNMP'
+                    host: 'Ubiquiti EdgeSwitch 8 150W V2'
                     key: 'net.if.in[ifHCInOctets.{#SNMPINDEX}]'
                 - sortorder: '1'
                   color: 199C0D
                   calc_fnc: ALL
                   item:
-                    host: 'Ubiquiti EdgeSwitch 8 150W SNMP'
+                    host: 'Ubiquiti EdgeSwitch 8 150W V2'
                     key: 'net.if.out[ifHCOutOctets.{#SNMPINDEX}]'
       tags:
         - tag: class

@@ -13,6 +13,7 @@ zabbix_export:
       templates:
         - name: 'Generic by SNMP'
         - name: 'Ubiquiti Airmax 8.0'
+        - name: 'Ubiquiti GEO'
       groups:
         - name: Templates/Ubiquiti
       items:
@@ -209,37 +210,6 @@ zabbix_export:
           tags:
             - tag: component
               value: cpu
-        - uuid: e5f825884a22494888f4b950d77a241e
-          name: Latitude
-          type: SNMP_AGENT
-          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.3.0
-          key: ubnt.latitude
-          delay: 1d
-          history: 7d
-          value_type: TEXT
-          trends: '0'
-          inventory_link: LOCATION_LAT
-          tags:
-            - tag: Application
-              value: GEO
-        - uuid: 19cbbade00f2459898654d9b7bb5c28a
-          name: Longitude
-          type: SNMP_AGENT
-          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.4.0
-          key: ubnt.longitude
-          delay: 1d
-          history: 7d
-          value_type: TEXT
-          trends: '0'
-          inventory_link: LOCATION_LON
-          preprocessing:
-            - type: REGEX
-              parameters:
-                - '^(-[0-9]+)\.-([0-9]+)$'
-                - \1.\2
-          tags:
-            - tag: Application
-              value: GEO
         - uuid: 41d511088a2847688a4a198c5e4b52d9
           name: 'Free memory'
           type: SNMP_AGENT
@@ -370,7 +340,7 @@ zabbix_export:
               newvalue: unknown
   triggers:
     - uuid: 673f7ce033ad41a8adffe801a494f9cf
-      expression: '(avg(/Ubiquiti Power Beam AC/ifInOctets.5,300s) > 75M) or (avg(/Ubiquiti Power Beam AC/ifOutOctets.5,300s) > 75M)'
+      expression: '(avg(/Ubiquiti Power Beam AC V2/ifInOctets.5,300s) > 75M) or (avg(/Ubiquiti Power Beam AC V2/ifOutOctets.5,300s) > 75M)'
       name: 'Eth0 75Mb'
       priority: HIGH
   graphs:
@@ -379,7 +349,7 @@ zabbix_export:
       graph_items:
         - color: 00C800
           item:
-            host: 'Ubiquiti Power Beam AC'
+            host: 'Ubiquiti Power Beam AC V2'
             key: icmppingsec
     - uuid: 25f00b7e9d5c48598667d6b02d19d319
       name: 'Wlan Traffic'
@@ -387,11 +357,11 @@ zabbix_export:
         - drawtype: GRADIENT_LINE
           color: 0000EE
           item:
-            host: 'Ubiquiti Power Beam AC'
+            host: 'Ubiquiti Power Beam AC V2'
             key: ifInOctets.10
         - sortorder: '1'
           drawtype: GRADIENT_LINE
           color: 00C800
           item:
-            host: 'Ubiquiti Power Beam AC'
+            host: 'Ubiquiti Power Beam AC V2'
             key: ifOutOctets.10

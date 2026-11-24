@@ -12,6 +12,7 @@ zabbix_export:
         version: 1.0-1
       templates:
         - name: 'Generic by SNMP'
+        - name: 'Ubiquiti GEO'
       groups:
         - name: Templates/Ubiquiti
       items:
@@ -106,37 +107,6 @@ zabbix_export:
           tags:
             - tag: Application
               value: Interfaces
-        - uuid: 4587b813eb714fa787baee3d5bb1839d
-          name: Latitude
-          type: SNMP_AGENT
-          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.3.0
-          key: ubnt.latitude
-          delay: 1d
-          history: 7d
-          value_type: TEXT
-          trends: '0'
-          inventory_link: LOCATION_LAT
-          tags:
-            - tag: Application
-              value: GEO
-        - uuid: 47f58233cf2a4f5da4111136dde8b09f
-          name: Longitude
-          type: SNMP_AGENT
-          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.4.0
-          key: ubnt.longitude
-          delay: 1d
-          history: 7d
-          value_type: TEXT
-          trends: '0'
-          inventory_link: LOCATION_LON
-          preprocessing:
-            - type: REGEX
-              parameters:
-                - '^(-[0-9]+)\.-([0-9]+)$'
-                - \1.\2
-          tags:
-            - tag: Application
-              value: GEO
         - uuid: f6a04ab19c814bb7b649fdf30e4b8f93
           name: 'Hardware model'
           type: SNMP_AGENT
@@ -266,14 +236,14 @@ zabbix_export:
       graph_items:
         - color: 00C800
           item:
-            host: 'Ubiquiti Rocket AC Lite'
+            host: 'Ubiquiti Rocket AC Lite V2'
             key: ubntRadioFreq.1
     - uuid: de2a8b78af2848b5afc2bce7d48aaf85
       name: 'ICMP Responce Time'
       graph_items:
         - color: 00C800
           item:
-            host: 'Ubiquiti Rocket AC Lite'
+            host: 'Ubiquiti Rocket AC Lite V2'
             key: icmppingsec
     - uuid: 2e1bdb20639a4f33ba36776e07e7393e
       name: Signal
@@ -281,7 +251,7 @@ zabbix_export:
       graph_items:
         - color: 00C800
           item:
-            host: 'Ubiquiti Rocket AC Lite'
+            host: 'Ubiquiti Rocket AC Lite V2'
             key: ubntRadioTxPower.1
     - uuid: 8e7977bd95444c788081cecc32e2d946
       name: 'Wireless Speed Capacity'
@@ -289,13 +259,13 @@ zabbix_export:
         - drawtype: BOLD_LINE
           color: 00EE00
           item:
-            host: 'Ubiquiti Rocket AC Lite'
+            host: 'Ubiquiti Rocket AC Lite V2'
             key: ubntWlStatTxRate.1
         - sortorder: '1'
           drawtype: BOLD_LINE
           color: 0000EE
           item:
-            host: 'Ubiquiti Rocket AC Lite'
+            host: 'Ubiquiti Rocket AC Lite V2'
             key: ubntWlStatRxRate.1
     - uuid: adf20ade565b4b87a2ca45eadee22d6b
       name: 'Wlan Traffic'
@@ -303,11 +273,11 @@ zabbix_export:
         - drawtype: GRADIENT_LINE
           color: 0000EE
           item:
-            host: 'Ubiquiti Rocket AC Lite'
+            host: 'Ubiquiti Rocket AC Lite V2'
             key: ifInOctets.9
         - sortorder: '1'
           drawtype: GRADIENT_LINE
           color: 00C800
           item:
-            host: 'Ubiquiti Rocket AC Lite'
+            host: 'Ubiquiti Rocket AC Lite V2'
             key: ifOutOctets.9

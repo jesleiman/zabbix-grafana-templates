@@ -10,10 +10,11 @@ zabbix_export:
       description: Nanostation
       vendor:
         name: jesleiman
-        version: 1.0-1      
+        version: 1.0-1
       templates:
         - name: 'Generic by SNMP'
         - name: 'Ubiquiti Airmax 5.6'
+        - name: 'Ubiquiti GEO'
       groups:
         - name: Templates/Ubiquiti
       items:
@@ -55,37 +56,6 @@ zabbix_export:
           tags:
             - tag: component
               value: system
-        - uuid: 0c7077df4b1140d9bf8f307ec295981e
-          name: Latitude
-          type: SNMP_AGENT
-          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.3.0
-          key: ubnt.latitude
-          delay: 1d
-          history: 7d
-          value_type: TEXT
-          trends: '0'
-          inventory_link: LOCATION_LAT
-          tags:
-            - tag: Application
-              value: GEO
-        - uuid: 62b020a8c3484390aa1584bed58bef8d
-          name: Longitude
-          type: SNMP_AGENT
-          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.4.0
-          key: ubnt.longitude
-          delay: 1d
-          history: 7d
-          value_type: TEXT
-          trends: '0'
-          inventory_link: LOCATION_LON
-          preprocessing:
-            - type: REGEX
-              parameters:
-                - '^(-[0-9]+)\.-([0-9]+)$'
-                - \1.\2
-          tags:
-            - tag: Application
-              value: GEO
       discovery_rules:
         - uuid: a4d02d16938948ba9de6c2cd814fb728
           name: 'Network interfaces discovery'

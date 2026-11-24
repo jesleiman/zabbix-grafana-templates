@@ -13,6 +13,7 @@ zabbix_export:
       templates:
         - name: 'Generic by SNMP'
         - name: 'Ubiquiti Airmax 8.0'
+        - name: 'Ubiquiti GEO'
       groups:
         - name: Templates/Ubiquiti
       items:
@@ -201,35 +202,6 @@ zabbix_export:
           tags:
             - tag: component
               value: cpu
-        - uuid: d2e20de3031d444db321c0d015d0ad02
-          name: Latitude
-          type: SNMP_AGENT
-          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.3.0
-          key: ubnt.latitude
-          history: 7d
-          value_type: TEXT
-          trends: '0'
-          inventory_link: LOCATION_LAT
-          tags:
-            - tag: Application
-              value: GEO
-        - uuid: 18c0f3312e8b40779d6990c0a41c783b
-          name: Longitude
-          type: SNMP_AGENT
-          snmp_oid: 1.3.6.1.4.1.41112.1.4.9.4.0
-          key: ubnt.longitude
-          history: 7d
-          value_type: TEXT
-          trends: '0'
-          inventory_link: LOCATION_LON
-          preprocessing:
-            - type: REGEX
-              parameters:
-                - '^(-[0-9]+)\.-([0-9]+)$'
-                - \1.\2
-          tags:
-            - tag: Application
-              value: GEO
         - uuid: c4ac86e50109475aa6e64c096cffa10e
           name: 'Free memory'
           type: SNMP_AGENT
@@ -358,7 +330,7 @@ zabbix_export:
               newvalue: unknown
   triggers:
     - uuid: f3fb70fc8a8a44e3a858845c16131487
-      expression: '(avg(/Ubiquiti Power Beam AC - ISO/ifInOctets.5,300s) > 75M) or (avg(/Ubiquiti Power Beam AC - ISO/ifOutOctets.5,300s) > 75M)'
+      expression: '(avg(/Ubiquiti Power Beam AC - ISO V2/ifInOctets.5,300s) > 75M) or (avg(/Ubiquiti Power Beam AC - ISO V2/ifOutOctets.5,300s) > 75M)'
       name: 'Eth0 75Mb'
       priority: HIGH
   graphs:
@@ -368,11 +340,11 @@ zabbix_export:
         - drawtype: GRADIENT_LINE
           color: 0000EE
           item:
-            host: 'Ubiquiti Power Beam AC - ISO'
+            host: 'Ubiquiti Power Beam AC - ISO V2'
             key: ifInOctets.10
         - sortorder: '1'
           drawtype: GRADIENT_LINE
           color: 00C800
           item:
-            host: 'Ubiquiti Power Beam AC - ISO'
+            host: 'Ubiquiti Power Beam AC - ISO V2'
             key: ifOutOctets.10
