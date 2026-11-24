@@ -49,7 +49,7 @@ Uses `zypper` natively without additional packages.
 Run the automated installer script as `root` (or with `sudo`). It automatically detects your Linux distribution, enables cache timers, creates `/etc/zabbix/zabbix_agent2.d/updates.conf`, sets `Timeout=15`, restarts the agent, and tests the keys:
 
 ```bash
-curl -fsSL [https://githubusercontent.com](https://raw.githubusercontent.com/jesleiman/zabbix-grafana-templates/refs/heads/main/linux-updates/install-updates-monitor.sh) | sudo bash
+curl -fsSL https://raw.githubusercontent.com/jesleiman/zabbix-grafana-templates/refs/heads/main/linux-updates/install-updates-monitor.sh | sudo bash
 ```
 
 ### 🛠️ Option B: Manual Installation
